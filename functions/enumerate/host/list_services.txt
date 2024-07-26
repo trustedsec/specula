@@ -1,0 +1,11 @@
+Function list_services()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+	Set col = objWMIService.ExecQuery ("Select * from Win32_Service")
+
+	For Each objService in col 
+		services = services & vbCrLf & objService.Name & vbCrLf & "    State:" & objService.State & vbCrLf & "    Name: " & objService.StartName & vbCrLf & "    BinPath:" & objService.PathName
+	Next
+	list_services = services
+End Function

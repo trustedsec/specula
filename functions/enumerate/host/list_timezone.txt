@@ -1,0 +1,7 @@
+Function list_timezone()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objreg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	objreg.GetStringValue 2147483650, "SYSTEM\CurrentControlSet\Control\TimeZoneInformation", "TimeZoneKeyName", strtimezone
+	list_timezone = strtimezone
+End Function

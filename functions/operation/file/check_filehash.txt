@@ -1,0 +1,18 @@
+Function check_filehash()
+    On Error Resume Next    
+    set oMD5 = window.external.OutlookApplication.CreateObject("System.Security.Cryptography.MD5CryptoServiceProvider")
+    Set oStream = window.external.OutlookApplication.CreateObject("ADODB.Stream")
+    oStream.Type = 1 'adTypeBinary
+    oStream.Open
+    oStream.LoadFromFile {{file}}
+    CompleteFile = oStream.Read
+    oStream.Close
+    Set oStream = Nothing
+
+    oMD5.ComputeHash_2(CompleteFile)
+    Set oXml = CreateObject("MSXML2.DOMDocument")
+    Set oElement = oXml.CreateElement("tmp")
+    oElement.DataType = "bin.hex"
+    oElement.NodeTypedValue = oMD5.Hash
+    check_filehash = "MD5 hash of file " & {{file}} & " is " & oElement.Text
+End Function

@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpeculaApi", "SpeculaApi\SpeculaApi.vcxproj", "{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpeculaApiPS", "SpeculaApiPS\SpeculaApiPS.vcxproj", "{B58767EE-5185-4E99-818F-6285332400E6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB} = {AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}.Debug|x64.ActiveCfg = Debug|x64
+		{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}.Debug|x64.Build.0 = Debug|x64
+		{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}.Debug|x86.ActiveCfg = Debug|Win32
+		{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}.Debug|x86.Build.0 = Debug|Win32
+		{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}.Release|x64.ActiveCfg = Release|x64
+		{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}.Release|x64.Build.0 = Release|x64
+		{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}.Release|x86.ActiveCfg = Release|Win32
+		{AF2D318C-2C5A-4C9D-BE4C-AA5B3E8037DB}.Release|x86.Build.0 = Release|Win32
+		{B58767EE-5185-4E99-818F-6285332400E6}.Debug|x64.ActiveCfg = Debug|x64
+		{B58767EE-5185-4E99-818F-6285332400E6}.Debug|x86.ActiveCfg = Debug|Win32
+		{B58767EE-5185-4E99-818F-6285332400E6}.Release|x64.ActiveCfg = Release|x64
+		{B58767EE-5185-4E99-818F-6285332400E6}.Release|x86.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98C14C87-B4F7-4E1C-B61E-D945B7763368}
+	EndGlobalSection
+EndGlobal

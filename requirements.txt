@@ -1,0 +1,7 @@
+urllib3
+tornado
+requests
+jinja2
+pyopenssl
+pycryptodome
+pefile

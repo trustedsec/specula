@@ -1,0 +1,30 @@
+Function read_calendar()
+	on error resume next
+	Set folder = (window.external.OutlookApplication.GetNameSpace("MAPI")).GetDefaultFolder(9)
+	
+	myStart = Date & " 00:00 AM"
+    myEnd = DateAdd("d", {{days_to_read}}, date) & " 23:59 PM"
+	strRestriction = "[Start] > '" & myStart & "' AND [End] <= '" & myEnd & "'"
+    Set oItems = folder.items
+    oItems.IncludeRecurrences = True
+    oItems.Sort "[Start]"
+
+    Set oItemsInDateRange = oItems.Restrict(strRestriction)	
+	read_calendar = "Getting Calendar items from - " & folder.folderpath & vbCrLf & vbCrLf
+	For Each currentItem In oItemsInDateRange
+		if (currentItem.class = 26) then
+			read_calendar = read_calendar & "-= Calendar object =-" & vbCrLf
+			read_calendar = read_calendar & "Meeting Start and End: " & currentItem.start & " - " & currentItem.End & vbCrLf
+			read_calendar = read_calendar & "Meeting Subject: " & currentItem.subject & vbCrLf
+			read_calendar = read_calendar & "Meeting Recurring: " & currentItem.isRecurring & vbCrLf
+			read_calendar = read_calendar & "Meeting Organizer: " & currentItem.Organizer & vbCrLf
+			read_calendar = read_calendar & "Meeting Required Attendees: " & currentItem.RequiredAttendees & vbCrLf
+			read_calendar = read_calendar & "Meeting Optional Attendees: " & currentItem.OptionalAttendees & vbCrLf
+			if ({{include_body}}) then
+				read_calendar = read_calendar & "Meeting Body: " & currentItem.body & vbCrLf & vbCrLf
+			else
+					read_calendar = read_calendar & vbCrLf
+			end if
+		end if
+	next
+End Function

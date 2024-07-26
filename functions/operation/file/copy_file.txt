@@ -1,0 +1,16 @@
+Function copy_file()
+    On error resume next
+    Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+    
+    if fs.FileExists({{file}}) = True Then
+        fs.CopyFile {{file}}, {{destination}}
+    
+        If fs.FileExists({{destination}}) = True Then
+		    copy_file = "Copy file: " & {{file}} & " to " & {{destination}} & " - Success"
+	    else
+             copy_file = "Copy file: " & {{file}} & " to " & {{destination}} & " - Failed"
+	    End If
+    else
+        copy_file = {{file}} & " - File not found"
+    End if
+End Function

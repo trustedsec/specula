@@ -1,0 +1,25 @@
+Function list_localadmins()
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer({{host}}, "root\cimv2")
+	Set colItems1 = objWMIService.ExecQuery( "Select * from Win32_ComputerSystem")
+	For each objItem in colItems1
+			MachineName = objItem.Name
+	Next
+
+	toreturn = toreturn & "Administrators Group Membership on Machine : " & MachineName & vbCrLf
+	toreturn = toreturn & "-----Group Members------" & vbCrLf
+	Set colItems2 = objWMIService.ExecQuery("SELECT * FROM Win32_GroupUser WHERE GroupComponent=""Win32_Group.Domain='" & MachineName & "',Name='Administrators'""") 
+
+	For Each Path In colItems2
+		NamesArray = Split(Path.PartComponent,",")
+		strMemberName = Replace(Replace(NamesArray(1),Chr(34),""),"Name=","")
+		DomainNameArray = Split(NamesArray(0),"=")
+		strDomainName = Replace(DomainNameArray(1),Chr(34),"")
+		If strDomainName <> strComputerName Then
+			strMemberName = strDomainName & "\" & strMemberName
+		End If
+	toreturn = toreturn & strMemberName & vbCrLf
+	Next
+
+	list_localadmins = toreturn & vbCrLf
+End Function

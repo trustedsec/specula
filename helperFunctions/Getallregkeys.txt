@@ -1,0 +1,21 @@
+Function GetAllRegKeys(Root, Regpath, Arch, RootInt)
+	On Error Resume Next
+	GetAllRegKeys = "Failed to get values under " & Root & "\" & Regpath
+	const REG_SZ = 1
+	const REG_EXPAND_SZ = 2
+	const REG_BINARY = 3
+	const REG_DWORD = 4
+	const REG_MULTI_SZ = 7
+	const REG_QWORD = 11
+	Set oCtx = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemNamedValueSet")
+	oCtx.Add "__ProviderArchitecture", Arch
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objreg = objLocator.ConnectServer(".","root\cimv2","","",,,,oCtx).Get("StdRegProv")
+	objreg.EnumKey RootInt, Regpath, arrKeys
+	GetAllRegKeys = "Listing keys under " & Root & "\" & Regpath & vbCrLf
+	For Each subkey in arrKeys
+		GetAllRegKeys = GetAllRegKeys & Root & "\" & Regpath & "\" & subkey & vbCrLf
+	Next
+	
+	GetAllRegKeys = GetAllRegKeys & "-----------------------------------------" & vbCrLf
+End Function

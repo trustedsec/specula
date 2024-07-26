@@ -1,0 +1,76 @@
+Function list_installeddotnet()
+	On error resume next
+	list_installeddotnet = "INSTALLED .NET VERSIONS:" & vbCrLf
+	x64v1 = GetRegValue("HKLM", "Software\Microsoft\.NETFramework\Policy\v1.0\3705", "Install", 64, 2147483650, "STDREGPROV")
+	x64v11 = GetRegValue("HKLM", "Software\Microsoft\NET Framework Setup\NDP\v1.1.4322", "Install", 64, 2147483650, "STDREGPROV")
+	x64v2 = GetRegValue("HKLM", "Software\Microsoft\NET Framework Setup\NDP\v2.3.50727", "Install", 64, 2147483650, "STDREGPROV")
+	x64v3 = GetRegValue("HKLM", "Software\Microsoft\NET Framework Setup\NDP\v3.0\Setup", "InstallSuccess", 64, 2147483650, "STDREGPROV")
+	x64v35 = GetRegValue("HKLM", "Software\Microsoft\NET Framework Setup\NDP\v3.5", "Install", 64, 2147483650, "STDREGPROV")
+	x64v40C = GetRegValue("HKLM", "Software\Microsoft\NET Framework Setup\NDP\v4\Client", "Install", 64, 2147483650, "STDREGPROV")
+	x64v40F = GetRegValue("HKLM", "Software\Microsoft\NET Framework Setup\NDP\v4\Full", "Install", 64, 2147483650, "STDREGPROV")
+
+	x86v1 = GetRegValue("HKLM", "Software\WOW6432Node\Microsoft\.NETFramework\Policy\v1.0\3705", "Install", 64, 2147483650, "STDREGPROV")
+	x86v11 = GetRegValue("HKLM", "Software\WOW6432Node\Microsoft\NET Framework Setup\NDP\v1.1.4322", "Install", 64, 2147483650, "STDREGPROV")
+	x86v2 = GetRegValue("HKLM", "Software\WOW6432Node\Microsoft\NET Framework Setup\NDP\v2.3.50727", "Install", 64, 2147483650, "STDREGPROV")
+	x86v3 = GetRegValue("HKLM", "Software\WOW6432Node\Microsoft\NET Framework Setup\NDP\v3.0\Setup", "InstallSuccess", 64, 2147483650, "STDREGPROV")
+	x86v35 = GetRegValue("HKLM", "Software\WOW6432Node\Microsoft\NET Framework Setup\NDP\v3.5", "Install", 64, 2147483650, "STDREGPROV")
+	x86v40C = GetRegValue("HKLM", "Software\WOW6432Node\Microsoft\NET Framework Setup\NDP\v4\Client", "Install", 64, 2147483650, "STDREGPROV")
+	x86v40F = GetRegValue("HKLM", "Software\WOW6432Node\Microsoft\NET Framework Setup\NDP\v4\Full", "Install", 64, 2147483650, "STDREGPROV")
+
+	if (inStr(1,x64v1,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X64 .NET Framework v1.0 installed"  & vbCrLf
+	end if
+
+	if (inStr(1,x64v11,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X64 .NET Framework v1.1 installed"  & vbCrLf
+	end if
+	
+	if (inStr(1,x64v2,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X64 .NET Framework v2.0 installed" & vbCrLf
+	end if
+
+	if (inStr(1,x64v3,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X64 .NET Framework v3.0 installed" & vbCrLf
+	end if
+
+	if (inStr(1,x64v35,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X64 .NET Framework v3.5 installed" & vbCrLf
+	end if
+
+	if (inStr(1,x64v40C,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X64 .NET Framework v4.0-Client installed" & vbCrLf
+	end if
+
+	if (inStr(1,x64v40F,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X64 .NET Framework v4.0-Full installed" & vbCrLf
+	end if
+
+	if (inStr(1,x86v1,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X86 .NET Framework v1.0 installed"  & vbCrLf
+	end if
+
+	if (inStr(1,x86v11,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X86 .NET Framework v1.1 installed"  & vbCrLf
+	end if
+	
+	if (inStr(1,x86v2,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X86 .NET Framework v2.0 installed" & vbCrLf
+	end if
+
+	if (inStr(1,x86v3,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X86 .NET Framework v3.0 installed" & vbCrLf
+	end if
+
+	if (inStr(1,x86v35,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X86 .NET Framework v3.5 installed" & vbCrLf
+	end if
+
+	if (inStr(1,x86v40C,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X86 .NET Framework v4.0-Client installed" & vbCrLf
+	end if
+
+	if (inStr(1,x86v40F,"Path:",1) = 1) then
+		list_installeddotnet = list_installeddotnet & "X86 .NET Framework v4.0-Full installed" & vbCrLf
+	end if
+
+End Function

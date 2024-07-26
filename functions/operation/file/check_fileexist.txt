@@ -1,0 +1,9 @@
+Function check_fileexist()
+	On error resume next
+    Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	if fs.FileExists({{file}}) Then
+		check_fileexist = "File Exist: " & {{file}} & " - True"
+	else
+		check_fileexist = "File Exist: " & {{file}} & " - False"
+	End If
+End Function

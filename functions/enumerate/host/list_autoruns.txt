@@ -1,0 +1,35 @@
+Function list_autoruns()
+	On error resume next
+	list_autoruns = "HKCU Autoruns:" & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKCU", "Software\Microsoft\Windows\CurrentVersion\run", 64, 2147483649)
+	list_autoruns = list_autoruns & GetAllRegValues("HKCU", "Software\Microsoft\Windows\CurrentVersion\runonce", 64, 2147483649) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKCU", "Software\Microsoft\Windows\CurrentVersion\RunServices", 64, 2147483649) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKCU", "Software\Microsoft\Windows\CurrentVersion\RunServicesOnce", 64, 2147483649) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKCU", "Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run", 64, 2147483649) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKCU", "Software\Microsoft\Windows NT\CurrentVersion\Windows\load", 64, 2147483649) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKCU", "Software\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell", 64, 2147483649) & vbCrLf
+	list_autoruns = list_autoruns & vbCrLf
+    
+    'HKLM
+	list_autoruns = list_autoruns & "HKLM Autoruns:" & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKLM", "Software\Microsoft\Windows\CurrentVersion\Run", 64, 2147483650) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKLM", "Software\Microsoft\Windows\CurrentVersion\Run", 32, 2147483650) & vbCrLf
+    list_autoruns = list_autoruns & GetAllRegValues("HKLM", "Software\Microsoft\Windows\CurrentVersion\RunOnce", 64, 2147483650) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKLM", "Software\Microsoft\Windows\CurrentVersion\RunOnce", 32, 2147483650) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKLM", "Software\Microsoft\Windows\CurrentVersion\RunOnceEx", 64, 2147483650) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKLM", "Software\Microsoft\Windows\CurrentVersion\RunOnceEx", 32, 2147483650) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKLM", "Software\Microsoft\Windows\CurrentVersion\RunServicesOnce", 64, 2147483650) & vbCrLf
+	list_autoruns = list_autoruns & GetAllRegValues("HKLM", "Software\Microsoft\Windows\CurrentVersion\RunServices", 64, 2147483650) & vbCrLf
+    list_autoruns = list_autoruns & GetAllRegValues("HKLM", "Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run", 64, 2147483650) & vbCrLf
+	
+	list_autoruns = list_autoruns & GetRegValue("HKLM", "SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon", "Notify", 64, 2147483650, "STDREGPROV") & vbCrLf & vbCrLf
+	list_autoruns = list_autoruns & GetRegValue("HKLM", "SOFTWARE\Microsoft\Windows NT\CurrentVersion\Userinit", "Notify", 64, 2147483650, "STDREGPROV") & vbCrLf & vbCrLf
+    list_autoruns = list_autoruns & GetRegValue("HKLM", "SOFTWARE\Microsoft\Windows NT\CurrentVersion\Shell", "Notify", 64, 2147483650, "STDREGPROV") & vbCrLf & vbCrLf
+	list_autoruns = list_autoruns & GetRegValue("HKLM", "SOFTWARE\Microsoft\Windows\CurrentVersion\ShellServiceObjectDelayLoad", "WebCheck", 64, 2147483650, "STDREGPROV") & vbCrLf & vbCrLf
+    list_autoruns = list_autoruns & GetRegValue("HKLM", "SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows", "AppInit_DLLs", 64, 2147483650, "STDREGPROV") & vbCrLf & vbCrLf
+
+	'Files
+	list_autoruns = list_autoruns & "FILE Autoruns:" & vbCrLf
+	list_autoruns = list_autoruns & dir_lister("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp", 0, False, "*", "*", True, "mb") & vbCrLf
+	list_autoruns = list_autoruns & dir_lister("C:\Users\" & {{username}} & "\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup", 0, False, "*", "*", True, "mb") & vbCrLf
+End Function

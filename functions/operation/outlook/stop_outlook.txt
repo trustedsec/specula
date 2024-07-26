@@ -1,0 +1,5 @@
+Function Stop_Outlook()
+	On Error Resume Next
+	window.external.OutlookApplication.Quit()
+	Stop_Outlook = "Stop Outlook sent"
+End Function

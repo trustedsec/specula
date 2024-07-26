@@ -1,0 +1,59 @@
+Function list_logging()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objReg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+
+	' Cmd Line Process Auditing
+	keycmdlog = "SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit"
+	objReg.EnumKey 2147483650, keycmdlog, arrSubKeys
+	objReg.GetDWORDValue 2147483650, keycmdlog, "ProcessCreationIncludeCmdLine_Enabled", isenabled
+
+	If IsNull(isenabled) Then
+		val = "Not Enabled"
+	Else
+		If isenabled > 0 Then
+			val = "Enabled!"
+		Else
+			val = "Not Enabled"
+		End If
+	End If
+
+	cmdaud = "Command Line Proc Arg Auditing: " & val & vbCrlf
+
+	'Posh logging
+	pslog = ""
+	KeyPSLog1 = "Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"
+	KeyPSLog2 = "Software\Policies\Microsoft\Windows\PowerShell\Transcription"
+	objReg.EnumKey 2147483650, KeyPSLog1, arrSubkeys
+	objReg.GetDWORDValue 2147483650, KeyPSLog1, "EnableScriptBlockLogging", scriptlogging
+	If scriptlogging = 1 Then
+		pslog = pslog & "PowerShell Script Block Logging: Enabled" & vbCrlf
+	Else
+		pslog = pslog & "PowerShell Script Block Logging: Disabled" & vbCrlf
+	End If
+
+	objReg.EnumKey 2147483650, KeyPSLog2, arrSubkeys
+	objReg.GetDWORDValue 2147483650, KeyPSLog2, "EnableTranscripting", enabletranscripting
+	objReg.GetDWORDValue 2147483650, KeyPSLog2, "OutputDirectory", outputdirectory
+	objReg.GetDWORDValue 2147483650, KeyPSLog2, "EnableInvocationHeader", enableinvocationheader
+
+	If enabletranscripting = 1 Then
+		pslog = pslog & "PowerShell Transcription Logging: Enabled" & vbCrlf
+	Else
+		pslog = pslog & "PowerShell Transcription Logging: Disabled" & vbCrlf
+	End If
+
+	If outputdirectory = 1 Then
+		pslog = pslog & "PowerShell Output Directory: Enabled" & vbCrlf
+	Else
+		pslog = pslog & "PowerShell Output Directory: Disabled" & vbCrlf
+	End If
+
+	If enableinvocationheader = 1 Then
+		pslog = pslog & "PowerShell Invocation Header: Enabled" & vbCrlf
+	Else
+		pslog = pslog & "PowerShell Invocation Header: Disabled" & vbCrlf
+	End If
+
+	list_logging = cmdaud & vbCrLF & pslog & vbCrLF
+End Function

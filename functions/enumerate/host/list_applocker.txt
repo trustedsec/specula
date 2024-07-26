@@ -1,0 +1,35 @@
+Function list_applocker()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objReg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	
+	ALlog = "Enumerate AppLocker status:" & vbCrLf
+	KeyPathAL = "Software\Policies\Microsoft\Windows\SrpV2\" 
+	results = objReg.EnumKey(2147483650, KeyPathAL, arrSubkeysAL)
+	If results <> 0 Then
+		ALlog = ALlog & "AppLocker disabled!"
+		list_applocker = ALlog
+	Else
+		ALlog = ALlog & "AppLocker enabled!"  & vbCrlf
+		For Each strSubkeyAL In arrSubkeysAL
+			status = objReg.GetDwordValue(2147483650, KeyPathAL & strSubkeyAL, "EnforcementMode", sectionMode)
+			If status <> 0 Then
+				val = "Not Enabled"
+			Else
+				If sectionMode = 1 Then
+					val = "Enforced"
+				ElseIf sectionMode = 0 Then
+					val = "Auditing"
+				End If
+				resul = objReg.EnumKey(2147483650, KeyPathAL & strSubKeyAL, arrSectionSub)
+				AppLockerRules = AppLockerRules & "AppLocker Rule section: " & strSubKeyAL & vbCrlf
+				For Each strSub in arrSectionSub
+						res = objReg.GetStringValue(2147483650, KeyPathAL & strSubKeyAL & "\" & strSub, "Value", outrules)
+						AppLockerRules = AppLockerRules & outrules & vbCrlf			
+				Next
+			End If
+			ALlog = ALlog & "EnforcementMode for " & strSubKeyAl & " Is " & val  & vbCrlf
+		Next
+		list_applocker = ALlog & vbCrlf & AppLockerRules
+	End If 
+End Function

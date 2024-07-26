@@ -1,0 +1,11 @@
+Function list_officearch()
+	On Error Resume Next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objreg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	objreg.GetStringValue 2147483650, "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\outlook.exe", "Path", strPath
+	if InStr(strPath, "x86") > 0 Then
+		list_officearch = "x86"
+	else
+		list_officearch = "x64"
+	end if	
+End Function

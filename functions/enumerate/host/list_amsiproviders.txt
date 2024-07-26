@@ -1,0 +1,22 @@
+Function list_amsiproviders()
+	On error resume next
+	const REG_SZ = 1
+	const REG_EXPAND_SZ = 2
+	const REG_BINARY = 3
+	const REG_DWORD = 4
+	const REG_MULTI_SZ = 7
+	const REG_QWORD = 11
+
+	myoutput = "Registered AMSI providers found on system:" & vbCrLf
+	Set oCtx = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemNamedValueSet")
+	oCtx.Add "__ProviderArchitecture", 64
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objreg = objLocator.ConnectServer(".","root\cimv2","","",,,,oCtx).Get("StdRegProv")
+	objreg.EnumKey 2147483650, "Software\Microsoft\AMSI\Providers", arrKeys
+	For Each subkey in arrKeys
+		myoutput = myoutput & "Provider guid: " & subkey & vbCrLf
+		objReg.GetStringValue 2147483650,"Software\Classes\CLSID\" & subkey,"",strValue
+		myoutput = myoutput & "CLSID name: " & strValue & vbCrLf & vbCrLf
+	Next
+	list_amsiproviders = myoutput
+End Function

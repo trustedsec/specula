@@ -1,0 +1,11 @@
+Function list_hostsfile()
+	On error resume next
+	Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+    If fs.FileExists("C:\Windows\System32\drivers\etc\hosts") = True Then
+        set ReadFile = fs.OpenTextFile("C:\Windows\System32\drivers\etc\hosts", 1)
+		content = ReadFile.ReadAll
+	else
+		content = "Hosts file not found - WTF!"
+	End If
+	list_hostsfile = "C:\Windows\System32\drivers\etc\hosts:" & vbCrLf & content
+End Function

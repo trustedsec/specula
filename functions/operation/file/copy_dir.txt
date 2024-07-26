@@ -1,0 +1,14 @@
+Function copy_dir()
+    On error resume next
+    Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+    if fs.FolderExists({{destination}}) = True Then
+        copy_dir = "Destination directory already exists - Failed"
+    else
+        fs.CopyFolder {{directory}}, {{destination}}    
+		if fs.FolderExists({{destination}}) = True Then
+            copy_dir = "Copy directory: " & {{directory}} & " to " & {{destination}} & " - Success"
+	    else
+             copy_dir = "Copy directory: " & {{directory}} & " to " & {{destination}} & " - Failed"
+	    End If
+    End if
+End Function

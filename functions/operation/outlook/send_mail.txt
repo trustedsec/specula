@@ -1,0 +1,11 @@
+Function send_mail()
+	on error resume next
+	Set objMail = window.external.OutlookApplication.CreateItem(0)
+	objMail.to = {{ recipient }}
+	objMail.Subject = {{ subject }}
+	objMail.Body = {{ body }}
+	'objMail.Attachments.Add(NewName)
+	objMail.DeleteAfterSubmit = {{ delete_after_sent }}
+	objMail.Send
+	send_mail = "Sent mail to:" & {{ recipient }}
+End Function

@@ -1,0 +1,38 @@
+// SpeculaApi.idl : IDL source for SpeculaApi
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (SpeculaApi.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(b0f5f947-8064-48f7-a623-5c058dc91cc8),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ISepcula : IDispatch
+{
+	[id(1)] HRESULT RunShell([in] BSTR cmd, [in, optional] VARIANT timeout, [out, retval] BSTR* result);
+	[id(2)] HRESULT LoadDll([in] BSTR path, [in] boolean persist, [out, retval] boolean* status);
+};
+[
+	uuid(5be8ef76-6253-482a-926e-d1d877de3b63),
+	version(1.0),
+]
+library SpeculaApiLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(e8b55279-c6b4-48f3-8138-b727337c0236)
+	]
+	coclass Sepcula
+	{
+		[default] interface ISepcula;
+	};
+};
+
+import "shobjidl.idl";

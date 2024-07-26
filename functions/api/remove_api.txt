@@ -1,0 +1,32 @@
+
+Function remove_api()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	basepath = "software\classes\"
+	
+	regdelres = DelRegKey_HKCU(basepath + "OutLookHelper.Sysinfo") & vbCrlf
+	regdelres = regdelres & DelRegKey_HKCU(basepath + "SpeculaApi.Specula.1") & vbCrlf
+	regdelres = regdelres & DelRegKey_HKCU(basepath + "CLSID\{e8b55279-c6b4-48f3-8138-b727337c0236}") & vbCrlf
+	regdelres = regdelres & DelRegKey_HKCU(basepath + "TypeLib\{5be8ef76-6253-482a-926e-d1d877de3b63}") & vbCrlf
+	regdelres = regdelres & DelRegKey_HKCU(basepath + "Interface\{e8b55279-c6b4-48f3-8138-b727337c0236}") & vbCrlf
+	
+	if {{deletedlls}} = True Then
+		
+		If fs.FileExists({{dll}}) = True Then
+			fs.DeleteFile {{dll}}
+		else
+		End If
+
+		If fs.FileExists({{dll}}) = True Then
+			filedelres = filedelres & "Delete file: " & {{dll}} & " - Fail" & vbCrlf
+		else
+			filedelres = filedelres & "Delete file: " & {{dll}} & " - Success!" & vbCrlf
+		End If
+		remove_api = regdelres & filedelres
+	else
+		remove_api = regdelres
+	End if
+
+    
+End Function

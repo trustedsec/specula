@@ -1,0 +1,13 @@
+Function KillProc_Name()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+	Set col = objWMIService.ExecQuery ("Select Name,ProcessId,ParentProcessId from Win32_Process Where Name = '" & {{process}} & "'")
+
+	procs = "Processname - PID - PPID" & vbCrLf
+	For Each obj in col
+		procs = procs & "Killed process: " & obj.Name & " - " & obj.ProcessId & " - " & obj.ParentProcessId &  vbCrLf
+        obj.Terminate()
+	Next
+	KillProc_Name = procs
+End Function

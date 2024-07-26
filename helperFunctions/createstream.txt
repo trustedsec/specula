@@ -1,0 +1,13 @@
+Function CreateStream(hex_string)
+    Dim TEMPdec, TEMPstm
+	Set TEMPstm = window.external.OutlookApplication.CreateObject("System.IO.MemoryStream")
+    TEMPdec = HexToBytes(hex_string)
+
+    For Each i In TEMPdec
+        TEMPstm.WriteByte i
+    Next
+    TEMPstm.Position = 0
+	Set CreateStream = TEMPstm
+End Function
+
+

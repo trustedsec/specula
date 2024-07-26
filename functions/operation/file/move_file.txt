@@ -1,0 +1,10 @@
+Function move_file()
+    On error resume next
+    Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+    if fs.FileExists({{file}}) Then
+        fs.MoveFile {{file}}, {{destination}}
+        move_file = "Move File: " & {{file}} & " to " & {{destination}}
+    else
+        move_file = "Move File: File Does Exist Exist: " & {{file}}
+    End If
+End Function

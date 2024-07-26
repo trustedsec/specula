@@ -1,0 +1,10 @@
+Function list_hotfixes()
+	On Error Resume Next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+	Set colItems = objWMIService.ExecQuery("Select * from Win32_QuickFixEngineering",,48)
+	list_hotfixes = "HotFixID - Description - InstalledOn" & vbCrLf
+	For Each objItem in colItems
+		list_hotfixes = list_hotfixes & objItem.HotFixID & " - " & objItem.Description & " - " & objItem.InstalledOn & vbCrLf
+	Next
+End Function

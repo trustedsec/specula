@@ -1,0 +1,27 @@
+Function list_processes()
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+	Set col = objWMIService.ExecQuery ("Select Name,ProcessId,ParentProcessId,VirtualSize,ExecutablePath from Win32_Process")
+	procs = "PID" & vbTab & "PPID" & vbTab & "Arch" & vbTab & "ProcessName" & vbTab & vbTab & vbTab & "Executable Path" & vbCrLf
+	For Each obj in col
+		if obj.VirtualSize < 4000000000 Then
+			procarch = "x86"
+			if obj.processid = "0" then
+				procarch = "x64"
+			end if
+			if obj.processid = "4" then
+				procarch = "x64"
+			end if
+		else
+			procarch = "x64"
+		end if
+		if obj.Name = "Memory Compression" Then
+			procarch = "x64"
+		end if
+		if obj.Name = "Registry" Then
+			procarch = "x64"
+		end if
+		procs = procs & obj.ProcessId & vbTab & obj.ParentProcessId & vbTab & procarch & vbTab & obj.Name & vbTab & vbTab & vbTab & obj.ExecutablePath & vbCrLf
+	Next
+	list_processes = procs
+End Function

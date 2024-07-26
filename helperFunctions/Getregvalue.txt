@@ -1,0 +1,47 @@
+Function GetRegValue(Root, PathToKey, ValueName, Arch, RootInteger, WMIOperation)
+	On Error Resume Next
+	GetRegValue = "Failed to get value for " & ValueName & " under " & Root & "\" & PathToKey
+	
+	if WMIOperation = "MSI" Then
+		Dim objreg
+    	Set objreg = window.external.OutlookApplication.CreateObject("WindowsInstaller.Installer")
+    	strValue = objreg.RegistryValue(RootInteger, PathToKey, ValueName)
+		GetRegValue = "Path: " & Root & "\" & PathToKey & vbCrLf & "RegType: N/A using MSI WMI method" & vbCrLf & "ValueName: " & ValueName & vbCrLf & "Value: " & strValue
+	elseif WMIOperation = "STDREGPROV" Then
+		const REG_SZ = 1
+		const REG_EXPAND_SZ = 2
+		const REG_BINARY = 3
+		const REG_DWORD = 4
+		const REG_MULTI_SZ = 7
+		const REG_QWORD = 11
+		Set oCtx = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemNamedValueSet")
+	    oCtx.Add "__ProviderArchitecture", Arch
+		Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+		Set objreg = objLocator.ConnectServer(".","root\cimv2","","",,,,oCtx).Get("StdRegProv")
+		objreg.EnumValues RootInteger, PathToKey, arrValueNames, arrValueTypes
+		for I=0 To UBound(arrValueNames)
+			if UCase(arrValueNames(I)) = UCase(ValueName) Then
+				Select Case arrValueTypes(I)
+        			Case REG_SZ
+            			objreg.GetStringValue RootInteger, PathToKey, ValueName, strValue
+						GetRegValue = "Path: " & Root & "\" & PathToKey & vbCrLf & "RegType: REG_SZ" & vbCrLf & "ValueName: " & ValueName & vbCrLf & "Value: " & strValue
+        			Case REG_EXPAND_SZ
+						objreg.GetExpandedStringValue RootInteger, PathToKey, ValueName, strValue
+						GetRegValue = "Path: " & Root & "\" & PathToKey & vbCrLf & "RegType: REG_EXPAND_SZ" & vbCrLf & "ValueName: " & ValueName & vbCrLf & "Value: " & strValue
+        			Case REG_BINARY
+            			objreg.GetBinaryValue RootInteger, PathToKey, ValueName, strValue
+						GetRegValue = "Path: " & Root & "\" & PathToKey & vbCrLf & "RegType: REG_BINARY" & vbCrLf & "ValueName: " & ValueName & vbCrLf & "Value: " & strValue
+        			Case REG_DWORD
+            			objreg.GetDWORDValue RootInteger, PathToKey, ValueName, strValue
+					    GetRegValue = "Path: " & Root & "\" & PathToKey & vbCrLf & "RegType: REG_DWORD" & vbCrLf & "ValueName: " & ValueName & vbCrLf & "Value: " & strValue
+        			Case REG_MULTI_SZ
+            			objreg.GetMultiStringValue RootInteger, PathToKey, ValueName, strValue
+					    GetRegValue = "Path: " & Root & "\" & PathToKey & vbCrLf & "RegType: REG_MULTI_SZ" & vbCrLf & "ValueName: " & ValueName & vbCrLf & "Value: " & strValue						
+					Case REG_QWORD
+            			objreg.GetQWORDValue RootInteger, PathToKey, ValueName, strValue
+					    GetRegValue = "Path: " & Root & "\" & PathToKey & vbCrLf & "RegType: REG_QWORD" & vbCrLf & "ValueName: " & ValueName & vbCrLf & "Value: " & strValue												
+				End Select
+			End If
+		Next
+	End If 
+End Function

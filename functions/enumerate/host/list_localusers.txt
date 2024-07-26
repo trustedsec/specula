@@ -1,0 +1,22 @@
+Function list_localusers()
+	on error resume next
+	Set sh = window.external.OutlookApplication.CreateObject("Wscript.Shell")
+	compname = sh.ExpandEnvironmentStrings("%COMPUTERNAME%")
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+
+	toreturn = toreturn & "Local users on Machine " & compname & " : " & vbCrLf
+	Set colUsers = objWMIService.ExecQuery("SELECT * FROM Win32_UserAccount WHERE LocalAccount = True")
+	For Each objUser in colUsers
+		toreturn = toreturn & objUser.Name & vbCrLf
+		toreturn = toreturn & "--Description: " & objUser.Description & vbCrLf
+		toreturn = toreturn & "--Disabled: " & objUser.Disabled & vbCrLf
+		toreturn = toreturn & "--FullName: " & objUser.FullName & vbCrLf
+		toreturn = toreturn & "--Lockout: " & objUser.Lockout & vbCrLf
+		toreturn = toreturn & "--PasswordChangeable: " & objUser.PasswordChangeable & vbCrLf
+		toreturn = toreturn & "--PasswordExpires: " & objUser.PasswordExpires & vbCrLf
+		toreturn = toreturn & "--PasswordRequired: " & objUser.PasswordRequired & vbCrLf
+		toreturn = toreturn & vbCrLf
+	Next
+	list_localusers = toreturn
+End Function

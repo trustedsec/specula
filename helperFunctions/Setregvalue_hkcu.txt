@@ -1,0 +1,26 @@
+Function SetRegValue_HKCU(PathToKey, RegType, ValueName, Value)
+	On Error Resume Next
+	SetRegValue_HKCU = "TEST " & PathToKey & " " & RegType & " " & ValueName & " " & Value
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objreg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+    objreg.CreateKey 2147483649, PathToKey
+	If RegType = "REG_SZ" Then
+		if ValueName = "@" Then
+		    objreg.SetStringValue 2147483649, PathToKey, "", Value
+			SetRegValue_HKCU = "Value " & PathToKey & " " & ValueName & " Reg_Sz set to " & Value
+		else
+		    objreg.SetStringValue 2147483649, PathToKey, ValueName, Value
+		    SetRegValue_HKCU = "Value " & PathToKey & " " & ValueName & " Reg_Sz set to " & Value
+        end if
+	ElseIf RegType = "REG_DWORD" Then
+		if ValueName = "@" Then
+		    objreg.SetDWORDValue 2147483649, PathToKey, "", Value
+		    SetRegValue_HKCU = "Value " & PathToKey & " " & ValueName & " Reg_Dword set to " & Value
+        else
+            objreg.SetDWORDValue 2147483649, PathToKey, ValueName, Value
+		    SetRegValue_HKCU = "Value " & PathToKey & " " & ValueName & " Reg_Dword set to " & Value
+        End if
+	Else
+		SetRegValue_HKCU = RegType & " Not implemented yet"
+	End If
+End Function

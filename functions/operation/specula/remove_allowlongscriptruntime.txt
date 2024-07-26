@@ -1,0 +1,5 @@
+Function RemoveAllowLongScriptRuntime()
+	On error resume next
+	te = DelRegValue_HKCU("Software\Microsoft\Internet Explorer\Styles", "MaxScriptStatements")
+	RemoveAllowLongScriptRuntime = "HKCU\Software\Microsoft\Internet Explorer\Styles\MaxScriptStatements has been removed"
+End Function

@@ -1,0 +1,11 @@
+Function cat_file()
+	On error resume next
+	Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+    If fs.FileExists({{file}}) = True Then
+        set ReadFile = fs.OpenTextFile({{file}}, 1)
+		content = ReadFile.ReadAll
+	else
+		content = "File not found"
+	End If
+	cat_file = "Content of file " & {{file}} & ":" & vbCrLf & content
+End Function

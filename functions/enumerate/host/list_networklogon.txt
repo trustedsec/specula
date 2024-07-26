@@ -1,0 +1,19 @@
+Function list_networklogon()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objWMIService = objLocator.ConnectServer(".", "\root\cimv2")
+    Set colNetLogProfs = objWMIService.ExecQuery("SELECT * FROM Win32_NetworkLoginProfile",,48) 
+
+	For Each NIC in colNetLogProfs
+        For Each netlogAttribute in NIC.Properties_
+			if Not (IsNull(netlogAttribute.value) OR IsEmpty(netlogAttribute.value)) Then
+                if IsArray(netlogAttribute) then
+                    netlogResponse = netlogResponse & netlogAttribute.Name & ": " & Join(netlogAttribute, ", ") & vbCrLf
+                else
+                    netlogResponse = netlogResponse & netlogAttribute.Name & ": " & netlogAttribute.value & vbCrLf
+                end if
+            end if
+        Next
+	Next
+	list_networklogon = netlogResponse
+End Function

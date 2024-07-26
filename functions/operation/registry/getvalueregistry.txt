@@ -1,0 +1,4 @@
+Function GetValueRegistry()
+	On Error Resume Next
+	GetValueRegistry = GetRegValue({{Root}}, {{PathToKey}}, {{ValueName}}, {{Arch}}, {{RootInteger}}, {{WMIOperation}})
+End Function

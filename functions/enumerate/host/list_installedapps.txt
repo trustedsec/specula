@@ -1,0 +1,32 @@
+Function list_installedapps()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	objLocator.Add "__ProviderArchitecture", 64
+	Set objReg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	KeyPathApps = "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" 
+	objReg.EnumKey 2147483650, KeyPathApps, arrSubkeysapps 
+	apps = "Installed 64bits Applications:" & vbCrLf
+	For Each strSubkeyapps In arrSubkeysapps
+		objReg.GetStringValue 2147483650, KeyPathApps & strSubkeyapps, "DisplayName", appName
+		If appName <> "" Then 
+			objReg.GetStringValue 2147483650, KeyPathApps & strSubkeyapps, "DisplayVersion", Version
+			apps = apps & appName & " | " & Version & vbCrLf
+		End If 
+	Next 
+	apps = apps & vbCrLf & vbCrLf
+
+	objLocator.Add "__ProviderArchitecture", 32
+	Set objReg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	KeyPathApps = "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" 
+	objReg.EnumKey 2147483650, KeyPathApps, arrSubkeysapps 
+	apps = apps & "Installed 32bits Applications:" & vbCrLf
+	For Each strSubkeyapps In arrSubkeysapps
+		objReg.GetStringValue 2147483650, KeyPathApps & strSubkeyapps, "DisplayName", appName
+		If appName <> "" Then 
+			objReg.GetStringValue 2147483650, KeyPathApps & strSubkeyapps, "DisplayVersion", Version
+			apps = apps & appName & " | " & Version & vbCrLf
+		End If 
+	Next 
+	list_installedapps = apps & vbCrLf
+
+End Function

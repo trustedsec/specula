@@ -1,0 +1,56 @@
+Function downloadGAL()
+	on error resume next
+	Set GAL = window.external.OutlookApplication.GetNameSpace("MAPI").GetGlobalAddressList().AddressEntries
+	Dim i
+	Dim objectlist
+	Set contact = Nothing
+	Set EU = Nothing
+	Set DL = Nothing
+	i = {{curloc}}
+	For i = {{curloc}} To {{curloc + chunksize -1}}
+	        'objectlist = objectlist & GAL.Item(i).Name & ";"
+	        'objectlist = objectlist & GAL.Item(i).Address & ";"
+	        Set contact = GAL.Item(i).GetContact()
+	        Set EU = GAL.Item(i).getExchangeUser()
+	        Set DL = GAL.Item(i).GetExchangeDistributionList()
+            if not contact Is Nothing Then
+                objectlist = objectlist & "C"
+                objectlist = objectlist & contact.Email1Address & ";"
+                objectlist = objectlist & contact.Firstname & ";"
+                objectlist = objectlist & contact.LastName & ";"
+                objectlist = objectlist & contact.MobileTelephoneNumber & ";"
+                objectlist = objectlist & contact.OfficeLocation & ";"
+                objectlist = objectlist & contact.JobTitle & ";"
+                objectlist = objectlist & contact.BusinessTelephoneNumber  & ";"
+                objectlist = objectlist & contact.City & ";"
+                objectlist = objectlist & contact.StateOrProvince & ";"
+                objectlist = objectlist & contact.PostalCode & ";"
+                objectlist = objectlist & contact.StreetAddress & ";"
+                objectlist = objectlist & contact.CompanyName
+            ElseIf not EU is Nothing Then
+                objectlist = objectlist & "E"
+                objectlist = objectlist & EU.PrimarySmtpAddress & ";"
+                objectlist = objectlist & EU.Firstname & ";"
+                objectlist = objectlist & EU.LastName & ";"
+                objectlist = objectlist & EU.MobileTelephoneNumber & ";"
+                objectlist = objectlist & EU.OfficeLocation & ";"
+                objectlist = objectlist & EU.JobTitle & ";"
+                objectlist = objectlist & EU.BusinessTelephoneNumber  & ";"
+                objectlist = objectlist & EU.City & ";"
+                objectlist = objectlist & EU.StateOrProvince & ";"
+                objectlist = objectlist & EU.PostalCode & ";"
+                objectlist = objectlist & EU.StreetAddress & ";"
+                objectlist = objectlist & EU.CompanyName
+            ElseIf not DL Is Nothing Then
+                objectlist = objectlist & "D"
+                objectlist = objectlist & DL.PrimarySmtpAddress & ";"
+                objectlist = objectlist & DL.Name & ";"
+                objectlist = objectlist & DL.Alias & ";"
+                objectlist = objectlist & DL.Comments
+            Else
+                objectList = objectlist & "N"
+            End If
+			objectlist = objectlist & vbCrLf
+	Next
+    downloadGAL = objectlist
+End Function

@@ -1,0 +1,4 @@
+Function list_dir()
+	On error resume next
+    list_dir = dir_lister({{directory}}, {{depth}}, {{recurselevels}}, {{filetype}}, {{filename}}, {{nodirectories}}, {{sizeformat}}, {{nofiles}})
+End Function

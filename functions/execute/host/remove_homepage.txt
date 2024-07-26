@@ -1,0 +1,28 @@
+Function remove_homepage()
+	On Error Resume Next
+	Set objContext = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemNamedValueSet")
+	objContext.Add"__ProviderArchitecture",RegType
+	objContext.Add"__RequiredArchitecture",True
+
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objServices = objLocator.ConnectServer(".", "root\cimv2")
+	Set objReg=objServices.Get("StdRegProv")
+
+	objReg.GetStringValue 2147483648, "Word.Application\CurVer", "", o3
+	over = Right(o3, 2) & ".0"
+
+	strcrSecPth = "Software\Microsoft\Office\" + over + "\Outlook\UserInfo"
+	strKSecPth = "Software\Microsoft\Office\" + over + "\Outlook\Security"
+	strKWebPth = "Software\Microsoft\Office\" + over + "\Outlook\Webview\inbox"
+	strKey1EntryName = "EnableRoamingFolderHomepages"
+	strKey2EntryName = "URL"
+	strKey3EntryName = "KEY"
+
+	objReg.deletevalue 2147483649, strKSecPth,strKey1EntryName
+	objReg.deletevalue 2147483649, strKWebPth,strKey2EntryName
+	objReg.deletevalue 2147483649, strcrSecPth,strKey3EntryName
+
+	Set calfolder = window.external.OutlookApplication.GetNameSpace("MAPI").GetDefaultFolder(9)
+	Set window.external.OutlookApplication.ActiveExplorer.CurrentFolder = calfolder
+	remove_homepage = "Registry values removed and Outlook changed view to calendar"
+End Function

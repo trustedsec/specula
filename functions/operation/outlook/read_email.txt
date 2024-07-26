@@ -1,0 +1,37 @@
+Function read_email()
+	on error resume next
+	Set folder = (window.external.OutlookApplication.GetNameSpace("MAPI")).GetDefaultFolder({{folder_to_read_int}})
+	itemcount = {{items_to_read}}
+	
+    Set oItems = folder.items
+	oItems.Sort "[CreationTime]", True
+	
+	if itemcount > folder.items.count then
+		itemcount = folder.items.count
+	end if
+
+	read_email = "Getting Mail items from - " & folder.folderpath & vbCrLf & vbCrLf
+	For i = 1 To itemcount
+		if (oItems(i).class = 43) then
+			read_email = read_email & "-= Mail object =-" & vbCrLf
+			read_email = read_email & "Mail Subject: " & oItems(i).subject & vbCrLf
+			read_email = read_email & "Mail To: " & oItems(i).To & vbCrLf
+			read_email = read_email & "Mail Sender: " & oItems(i).sender & vbCrLf
+			read_email = read_email & "Importance: " & oItems(i).importance & vbCrLf
+			read_email = read_email & "Mail Attachments: " & oItems(i).attachments.count & vbCrLf
+			if oItems(i).attachments.count <> "" then
+				for ii = 1 To oItems(i).Attachments.count
+					read_email = read_email & "Attachment name " & ii & ": " & oItems(i).Attachments(ii) & vbCrLf
+				next
+		   end if
+
+			read_email = read_email & "Mail Unread: " & oItems(i).UnRead & vbCrLf
+			if ({{include_body}}) then
+				read_email = read_email & "Mail Body format: " & oItems(i).bodyformat & vbCrLf
+				read_email = read_email & "Mail Body: " & oItems(i).body & vbCrLf & vbCrLf
+			else
+				read_email = read_email & vbCrLf
+			end if
+		end if
+	next
+End Function

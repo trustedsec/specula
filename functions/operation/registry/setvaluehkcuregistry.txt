@@ -1,0 +1,4 @@
+Function SetValue_HKCU_Registry()
+	On Error Resume Next
+	SetValue_HKCU_Registry = SetRegValue_HKCU({{PathToKey}}, {{RegType}}, {{ValueName}}, {{Value}})
+End Function

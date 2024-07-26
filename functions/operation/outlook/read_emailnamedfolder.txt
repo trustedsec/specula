@@ -1,0 +1,118 @@
+Function read_emailnamedfolder()
+	on error resume next
+	input = {{folder_to_read}}
+	itemcount = {{items_to_read}}
+
+	FoldersArray = Split(input, "\")
+	Set TestFolder = window.external.OutlookApplication.Session.Folders(1).folders.item(FoldersArray(0)) 
+	if not IsNull(TestFolder) then
+		for i = 1 To UBound(FoldersArray, 1)
+			Set SubFolders = TestFolder.Folders
+			Set TestFolder = SubFolders.item(FoldersArray(i))
+		next
+	end if
+
+	If TestFolder is Nothing Then
+		Set TestFolder = Nothing
+		output = output & input & " folder could not be found. Sure it exists?" & vbCrLf
+		read_emailnamedfolder = output
+		Exit Function
+	end if
+
+	Set oItems = TestFolder.items
+	oItems.Sort "[CreationTime]", True
+		
+	if itemcount > TestFolder.items.count then
+		itemcount = TestFolder.items.count
+	end if
+
+	output = output & "Getting items from - " & input & vbCrLf
+	For i = 1 To itemcount
+		if (oItems(i).class = 43) then
+			output = output & "-= Mail object =-" & vbCrLf
+			output = output & "Mail Subject: " & oItems(i).subject & vbCrLf
+			output = output & "Mail To: " & oItems(i).To & vbCrLf
+			output = output & "Mail Sender: " & oItems(i).sender & vbCrLf
+			output = output & "Importance: " & oItems(i).importance & vbCrLf
+			output = output & "Mail Attachments: " & oItems(i).attachments.count & vbCrLf
+			if oItems(i).attachments.count <> "" then
+				for ii = 1 To oItems(i).Attachments.count
+					output = output & "Attachment name " & ii & ": " & oItems(i).Attachments(ii) & vbCrLf
+				next
+		   end if
+			output = output & "Mail Unread: " & oItems(i).UnRead & vbCrLf
+			if ({{include_body}}) then
+				output = output & "Mail Body format: " & oItems(i).bodyformat & vbCrLf
+				output = output & "Mail Body: " & oItems(i).body & vbCrLf & vbCrLf
+			else
+				output = output & vbCrLf
+			end if
+		end if
+		if (oItems(i).class = 44) then
+			output = output & "-= Note object =-" & vbCrLf
+			output = output & "Subject: " & oItems(i).subject & vbCrLf
+			output = output & "Category: " & oItems(i).Categories & vbCrLf			
+			output = output & "Body: " & oItems(i).body & vbCrLf
+			output = output & "Color: " & oItems(i).color & vbCrLf
+			output = output & "LastModificationTime: " & oItems(i).LastModificationTime & vbCrLf
+			output = output & "CreationTime: " & oItems(i).CreationTime & vbCrLf
+			output = output & vbCrLf
+		end if
+		if (oItems(i).class = 48) then
+			output = output & "-= Task object =-" & vbCrLf
+			output = output & "Subject: " & oItems(i).subject & vbCrLf
+			output = output & "Attachments: " & oItems(i).attachments.count & vbCrLf
+			output = output & "BillingInformation: " & oItems(i).BillingInformation & vbCrLf
+			output = output & "Body: " & oItems(i).body & vbCrLf
+			output = output & "Categories: " & oItems(i).categories & vbCrLf
+			output = output & "Companies: " & oItems(i).companies & vbCrLf
+			output = output & "Importance: " & oItems(i).importance & vbCrLf
+			output = output & "Sensitivity: " & oItems(i).sensitivity & vbCrLf
+			output = output & "Complete: " & oItems(i).complete & vbCrLf
+			output = output & "Contacts: " & oItems(i).contacts & vbCrLf
+			output = output & "ContactNames: " & oItems(i).contactnames & vbCrLf
+			output = output & "DelegationState: " & oItems(i).delegationstate & vbCrLf
+			output = output & "Delegator: " & oItems(i).delegator & vbCrLf
+			output = output & "DueDate: " & oItems(i).duedate & vbCrLf
+			output = output & "StartDate: " & oItems(i).startdate & vbCrLf
+			output = output & "DateCompleted: " & oItems(i).datecompleted & vbCrLf
+			output = output & "Complete: " & oItems(i).complete & vbCrLf
+			output = output & "LastModificationTime: " & oItems(i).LastModificationTime & vbCrLf
+			output = output & "CreationTime: " & oItems(i).CreationTime & vbCrLf
+			output = output & vbCrLf
+		end if
+		if (oItems(i).class = 42) then
+			output = output & "-= Journal object =-" & vbCrLf
+			output = output & "Subject: " & oItems(i).subject & vbCrLf
+			output = output & "Type: " & oItems(i).type & vbCrLf
+			output = output & "Attachments: " & oItems(i).attachments.count & vbCrLf
+			output = output & "BillingInformation: " & oItems(i).BillingInformation & vbCrLf
+			output = output & "Body: " & oItems(i).body & vbCrLf
+			output = output & "Categories: " & oItems(i).categories & vbCrLf
+			output = output & "Companies: " & oItems(i).companies & vbCrLf
+			output = output & "Importance: " & oItems(i).importance & vbCrLf
+			output = output & "Sensitivity: " & oItems(i).sensitivity & vbCrLf
+			output = output & "Start: " & oItems(i).start & vbCrLf
+			output = output & "End: " & oItems(i).end & vbCrLf
+			output = output & "Links: " & oItems(i).Links & vbCrLf
+			output = output & "LastModificationTime: " & oItems(i).LastModificationTime & vbCrLf
+			output = output & "CreationTime: " & oItems(i).CreationTime & vbCrLf
+			output = output & vbCrLf
+		end if
+		if (oItems(i).class = 40) then
+			output = output & "-= Contact object =-" & vbCrLf
+			output = output & "Email: " & oItems(i).Email1Address & vbCrLf
+			output = output & "Email2: " & oItems(i).Email2Address & vbCrLf
+			output = output & "FileAs: " & oItems(i).FileAs & vbCrLf
+			output = output & "FirstName: " & oItems(i).FirstName & vbCrLf
+			output = output & "LastName: " & oItems(i).LastName & vbCrLf
+			output = output & "LastNameAndFirstName : " & oItems(i).LastNameAndFirstName  & vbCrLf
+			output = output & "MobileTelephoneNumber : " & oItems(i).MobileTelephoneNumber  & vbCrLf
+			output = output & "PrimaryTelephoneNumber : " & oItems(i).PrimaryTelephoneNumber  & vbCrLf
+			output = output & "Webpage : " & oItems(i).WebPage  & vbCrLf
+			output = output & "OfficeLocation : " & oItems(i).OfficeLocation  & vbCrLf
+			output = output & vbCrLf
+		end if
+	Next
+	read_emailnamedfolder = output
+End Function

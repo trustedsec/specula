@@ -1,0 +1,5 @@
+Function dump_gal()
+	on error resume next
+	Set GAL = window.external.OutlookApplication.GetNameSpace("MAPI").GetGlobalAddressList().AddressEntries
+    dump_gal = GAL.Count
+End Function

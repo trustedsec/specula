@@ -1,0 +1,4 @@
+Function GetAllValuesRegistry()
+	On Error Resume Next
+	GetAllValuesRegistry = Getallregvalues({{Root}}, {{PathToKey}}, {{Arch}}, {{RootInteger}})
+End Function

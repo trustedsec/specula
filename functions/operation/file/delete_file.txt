@@ -1,0 +1,13 @@
+Function delete_file()
+	On error resume next
+	Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+    If fs.FileExists({{file}}) = True Then
+        fs.DeleteFile {{file}}
+	End If
+
+	If fs.FileExists({{file}}) = True Then
+		delete_file = delete_file & "Delete file: " & {{file}} & " - Fail"
+	else
+		delete_file = delete_file & "Delete file: " & {{file}} & " - Success!"
+	End If
+End Function

@@ -1,0 +1,5 @@
+Function list_recentcommands()
+	On error resume next
+	list_recentcommands = "RECENT COMMANDS:" & vbCrLf
+	list_recentcommands = list_recentcommands & GetAllRegValues("HKCU", "Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU", 64, 2147483649)
+End Function

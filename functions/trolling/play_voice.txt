@@ -1,0 +1,7 @@
+Function play_voice()
+	On error resume next
+	Set speech = window.external.OutlookApplication.CreateObject("sapi.spvoice")
+	Set speech.Voice = speech.GetVoices.Item({{voicegender}})
+	speech.speak{{speaktext}}
+	play_voice = "Your speaktext was sent to the speaker as voice. Mohahaha"
+End Function

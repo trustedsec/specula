@@ -1,0 +1,7 @@
+Function DelRegValue_HKCU(PathToKey, ValueName)
+	On Error Resume Next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objreg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	objreg.DeleteValue 2147483649, PathToKey, ValueName
+	DelRegValue_HKCU = ValueName & " Deleted successfully under " & PathToKey
+End Function

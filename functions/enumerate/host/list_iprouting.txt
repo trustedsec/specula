@@ -1,0 +1,21 @@
+Function list_iprouting()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objWMIService = objLocator.ConnectServer(".", "\root\cimv2")
+    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_IP4RouteTable",,48) 
+
+    list_iprouting = "----- DYNAMIC ROUTES -----" & vbCrlf
+	For Each objItem in colItems
+        list_iprouting = list_iprouting & "Description: " & objItem.Description & vbCrlf
+        list_iprouting = list_iprouting & "Interface Index: " & objItem.InterfaceIndex & vbCrlf
+        list_iprouting = list_iprouting & "Metric: " & objItem.Metric1 & vbCrlf
+        list_iprouting = list_iprouting & "Protocol: " & objItem.Protocol & vbCrlf & vbCrlf
+	Next
+
+    list_iprouting = list_iprouting & "----- PERSISTENT ROUTES -----" & vbCrlf
+    Set colItems2 = objWMIService.ExecQuery("SELECT * FROM Win32_IP4PersistedRouteTable",,48)
+    For Each objItem in colItems2
+        list_iprouting = list_iprouting & "Description: " & objItem.Description & vbCrlf
+        list_iprouting = list_iprouting & "Metric: " & objItem.Metric1 & vbCrlf
+	Next
+End Function

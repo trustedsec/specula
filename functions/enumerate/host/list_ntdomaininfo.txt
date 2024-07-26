@@ -1,0 +1,19 @@
+Function list_ntdomaininfo()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+	Set colNTDomain = objWMIService.ExecQuery("Select * from Win32_NTDomain")
+
+	For Each domain in colNTDomain
+        For Each domAttribute in domain.Properties_
+            if Not (IsNull(domAttribute.value) OR IsEmpty(domAttribute.value)) Then
+                if IsArray(domAttribute) then
+                    ntinfo = ntinfo & domAttribute.Name & ": " & Join(domAttribute, ", ") & vbCrLf
+                else
+                    ntinfo = ntinfo & domAttribute.Name & ": " & domAttribute.value & vbCrLf
+                end if
+            end if
+        Next
+	Next
+		list_ntdomaininfo = ntinfo
+End Function

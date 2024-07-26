@@ -1,0 +1,15 @@
+Function delete_dir()
+    On error resume next
+    Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+
+    if fs.FolderExists({{directory}}) = True Then
+        fs.DeleteFolder {{directory}}, True
+        If fs.FolderExists({{directory}}) = False Then
+		    delete_dir = "Delete directory: " & {{directory}} & " - Success"
+	    else
+            delete_dir = "Delete directory: " & {{directory}} & " - Failed"
+	    End If
+    else
+        delete_dir = {{directory}} & " - Directory not found"
+    End if
+End Function

@@ -1,0 +1,19 @@
+Function list_gpp()
+    On error resume next
+    Set sh = window.external.OutlookApplication.CreateObject("Wscript.Shell")
+    Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+    dom = sh.ExpandEnvironmentStrings("%USERDNSDOMAIN%")
+    polpath = "C:\Windows\sysnative\GroupPolicy\DataStore\0\sysvol\" & dom & "\Policies\"
+    If fs.FolderExists(polpath) = True Then
+        output = "Found " & "C:\Windows\sysnative\GroupPolicy\DataStore\0\sysvol\" & dom & "\Policies\" & vbCrLf
+        output = output & "Searching for Groups.xml" & vbCrLf & dir_lister(polpath, 0, 4, "xml", "Groups", True, "mb") & vbCrLf
+        output = output & "Searching for Drives.xml" & vbCrLf &dir_lister(polpath, 0, 4, "xml", "Drives", True, "mb") & vbCrLf
+        output = output & "Searching for Services.xml" & vbCrLf &dir_lister(polpath, 0, 4, "xml", "Services", True, "mb") & vbCrLf
+        output = output & "Searching for ScheduledTasks.xml" & vbCrLf &dir_lister(polpath, 0, 4, "xml", "ScheduledTasks", True, "mb") & vbCrLf
+        output = output & "Searching for Datasources.xml" & vbCrLf &dir_lister(polpath, 0, 4, "xml", "Datasources", True, "mb") & vbCrLf
+        output = output & "Searching for Printers.xml" & vbCrLf &dir_lister(polpath, 0, 4, "xml", "Printers", True, "mb") & vbCrLf
+    else
+        output = "Local Policy Folder not found at " & polpath
+	End If
+    list_gpp = output
+End Function

@@ -1,0 +1,19 @@
+Function list_overview()
+	on error resume next
+	Set folder = window.external.OutlookApplication.GetNameSpace("MAPI")
+	set subfolders = folder.Folders(1).Folders
+	for i = 1 To subfolders.count
+		output = output & "| " & subfolders(i) & " (" & subfolders(i).items.Count & ")" & vbCrLf
+		if subfolders(i).folders.count <> 0 then
+			for ii = 1 To subfolders(i).folders.count
+				output = output & "-> " & subfolders(i).folders(ii) & " (" & subfolders(i).folders(ii).items.count & ")" & vbCrLf
+				if subfolders(i).folders(ii).folders.count <> 0 then
+					for iii = 1 To subfolders(i).folders(ii).folders.count
+						output = output & "--> " & subfolders(i).folders(ii).folders(iii) & " (" & subfolders(i).folders(ii).folders(iii).items.count & ")" & vbCrLf
+					next
+				end if
+			next
+		end if
+	next
+	list_overview = output
+End Function

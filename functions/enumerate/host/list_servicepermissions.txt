@@ -1,0 +1,118 @@
+Function list_servicepermissions()
+	' ACE Types
+
+	Const ACCESS_ALLOWED_ACE_TYPE = &h0
+	Const ACCESS_DENIED_ACE_TYPE  = &h1
+
+	' Base Access Mask values
+
+	Const FILE_READ_DATA = &h1
+	Const FILE_WRITE_DATA = &h2
+	Const FILE_APPEND_DATA = &h4
+	Const FILE_READ_EA = &h8
+	Const FILE_WRITE_EA = &h10
+	Const FILE_EXECUTE = &h20
+	Const FILE_DELETE_CHILD = &h40
+	Const FILE_READ_ATTRIBUTES = &h80
+	Const FILE_WRITE_ATTRIBUTES = &h100
+	Const FOLDER_DELETE = &h10000
+	Const READ_CONTROL = &h20000
+	Const WRITE_DAC = &h40000
+	Const WRITE_OWNER = &h80000
+	Const SYNCHRONIZE = &h100000
+
+	' Constructed Access Masks
+
+	Dim FULL_CONTROL
+	FULL_CONTROL = FILE_READ_DATA + FILE_WRITE_DATA + FILE_APPEND_DATA + _
+		FILE_READ_EA + FILE_WRITE_EA + FILE_EXECUTE + FILE_DELETE_CHILD + _
+		FILE_READ_ATTRIBUTES + FILE_WRITE_ATTRIBUTES + FOLDER_DELETE + _
+		READ_CONTROL + WRITE_DAC + WRITE_OWNER + SYNCHRONIZE
+
+	Dim READ_ONLY
+	READ_ONLY = FILE_READ_DATA + FILE_READ_EA + FILE_EXECUTE + _
+		FILE_READ_ATTRIBUTES + READ_CONTROL + SYNCHRONIZE
+
+	Dim MODIFY
+	MODIFY = FILE_READ_DATA + FILE_WRITE_DATA + FILE_APPEND_DATA + _
+		FILE_READ_EA + FILE_WRITE_EA + FILE_EXECUTE + _
+		FILE_READ_ATTRIBUTES + _
+		FILE_WRITE_ATTRIBUTES + FOLDER_DELETE + READ_CONTROL + SYNCHRONIZE
+
+
+	Dim strRights
+	Dim intAccessMask
+
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+	Set col = objWMIService.ExecQuery ("Select * from Win32_Service")
+
+	For Each objService in col
+		if InStr(objService.PathName,"{") then
+			binarray = split(objService.PathName, " ", -1, 1)
+			binpathStr = binarray(0)
+		elseif InStr(objService.PathName,"-") then
+			binarray = split(objService.PathName, "-", -1, 1)
+			binpathStr = binarray(0)
+		elseif InStr(objService.PathName,"/") then
+			binarray = split(objService.PathName, "/", -1, 1)
+			binPathStr = Replace(binarray(0), chr(34), "")
+			binpathStr = binarray(0)
+		else
+			binpathStr = objService.PathName
+		end if
+    
+		sanbin = trim(Replace(binarray(0), chr(34), ""))
+		toreturn = toreturn & "Enumerating Permissions for: " & objService.Name & vbCrLf
+		toreturn = toreturn & sanbin & vbCrLf
+		
+		strDir = Replace(sanbin,"\","\\")
+		Set colACLs = objWMIService.ExecQuery("Select * from win32_logicalFileSecuritySetting WHERE Path='" & strDir & "'",,48)
+		for each objItem in colACLs
+			If objItem.GetSecurityDescriptor(objSD) Then
+				DisplayFileSecurity = False
+			End If
+
+			colACEs = objSD.DACL
+			for each objACE in colACEs
+				strAccessList = objACE.Trustee.Domain & "\" & objACE.Trustee.Name
+				
+				if left(strAccessList,1) = "\" then
+					strAccessList = right(strAccessList,len(strAccessList) -1)
+				end if
+
+					toreturn = toreturn & "    GROUP: " & Ucase(strAccessList) & vbCrLf
+					toreturn = toreturn & vbTab & "binPath: " & Replace(strDir,"\\","\") & vbCrLf
+
+					if objACE.AceType = 0 Then
+						   toreturn = toreturn & vbTab & "Sanity Check - Access Mask Value To Match: " & objACE.AccessMask & vbCrLf
+							
+							If objACE.ACEType = ACCESS_ALLOWED_ACE_TYPE Then
+								toreturn = toreturn & vbTab & "  ACE Type: Allow" & vbCrLf
+							Else
+								toreturn = toreturn & vbTab & "  ACE Type: Deny" & vbCrLf
+							End If
+
+							strRights = ""
+							intAccessMask = objACE.AccessMask
+
+							If intAccessMask = FULL_CONTROL Then
+								strRights = " (FullControl)"
+							ElseIf intAccessMask = MODIFY Then
+
+							strRights = " (Modify)"
+							ElseIf intAccessMask = READ_ONLY Then
+								strRights = " (ReadOnly)"
+							End If
+
+							toreturn = toreturn & vbTab & "  Access Mask (Decimal): " & intAccessMask & strRights & vbCrLf
+					elseif objACE.AceType = 1 Then
+						toreturn = toreturn & vbTab & "User does not have access - " & objACE.AceType & vbCrLf
+					end if
+			Next   
+		Next
+	Next
+
+	list_servicepermissions = toreturn & vbCrLf
+End Function

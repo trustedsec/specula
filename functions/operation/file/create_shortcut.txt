@@ -1,0 +1,14 @@
+Function create_shortcut()
+    On error resume next
+    Set objShell = window.external.OutlookApplication.CreateObject("WScript.Shell")
+    Set lnk = objShell.CreateShortcut({{file}})
+    lnk.TargetPath = {{targetpath}}
+    lnk.Arguments = {{arguments}}
+    lnk.Description = {{description}}
+    lnk.HotKey = {{hotkey}}
+    lnk.IconLocation = {{iconlocation}}
+    lnk.WindowStyle = {{windowstyle_int}}
+    lnk.WorkingDirectory = {{workingdirectory}}
+    lnk.Save
+    create_shortcut = "Shortcut created at " & {{file}}        
+End Function

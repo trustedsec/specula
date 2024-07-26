@@ -1,0 +1,4 @@
+Function DelKey_HKCU_Registry()
+    On Error Resume Next
+	DelKey_HKCU_Registry = DelRegKey_HKCU({{PathToKey}})
+End Function

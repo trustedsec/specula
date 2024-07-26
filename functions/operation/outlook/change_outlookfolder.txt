@@ -1,0 +1,9 @@
+Function change_outlookfolder()
+	on error resume next
+	Value = {{ hidden }}
+	PropName = "http://schemas.microsoft.com/mapi/proptag/0x10F4000B"
+	Set folder = (window.external.OutlookApplication.GetNameSpace("MAPI")).GetDefaultFolder({{ folder }})
+	Set oPA = folder.PropertyAccessor
+	oPA.SetProperty PropName, Value
+	change_outlookfolder = "Folder: " & folder & "  - Hidden set to: " & Value
+End Function

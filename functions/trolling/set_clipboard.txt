@@ -1,0 +1,6 @@
+Function set_clipboard()
+	On error resume next
+	Set html = window.external.OutlookApplication.CreateObject("htmlfile")
+	text = html.ParentWindow.ClipboardData.SetData("text", {{clipboardtext}})
+	set_clipboard = "Clipboard data set to: " & {{clipboardtext}}
+End Function

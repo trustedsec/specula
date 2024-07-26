@@ -1,0 +1,12 @@
+*.db
+configoptions.py
+specConfig.ini
+DefaultBlacklist.txt
+.vscode/
+specula_log.txt
+weblog.log
+operator_log.txt
+agent_data/
+payloadhosting/
+venv/
+*.pyc

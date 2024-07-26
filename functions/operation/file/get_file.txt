@@ -1,0 +1,7 @@
+Function get_file()
+	On Error Resume Next
+	Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	Set file = fs.GetFile({{file}})
+	if IsNull(file) Then Exit Function
+    get_file = file.size
+End Function

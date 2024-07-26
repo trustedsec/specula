@@ -1,0 +1,67 @@
+Function read_other()
+	on error resume next
+	Set folder = (window.external.OutlookApplication.GetNameSpace("MAPI")).GetDefaultFolder({{folder_to_read_int}})
+	itemcount = {{items_to_read}}
+	
+	Set oItems = folder.items
+	oItems.Sort "[CreationTime]", True
+	if itemcount > folder.items.count then
+		itemcount = folder.items.count
+	end if
+
+	
+	read_other = "Getting items from - " & folder.folderpath & vbCrLf & vbCrLf
+	For i = 1 To itemcount
+		if (oItems(i).class = 44) then
+			read_other = read_other & "-= Note object =-" & vbCrLf
+			read_other = read_other & "Subject: " & oItems(i).subject & vbCrLf
+			read_other = read_other & "Category: " & oItems(i).Categories & vbCrLf			
+			read_other = read_other & "Body: " & oItems(i).body & vbCrLf
+			read_other = read_other & "Color: " & oItems(i).color & vbCrLf
+			read_other = read_other & "LastModificationTime: " & oItems(i).LastModificationTime & vbCrLf
+			read_other = read_other & "CreationTime: " & oItems(i).CreationTime & vbCrLf
+			read_other = read_other & vbCrLf
+		end if
+		if (oItems(i).class = 48) then
+			read_other = read_other & "-= Task object =-" & vbCrLf
+			read_other = read_other & "Subject: " & oItems(i).subject & vbCrLf
+			read_other = read_other & "Attachments: " & oItems(i).attachments.count & vbCrLf
+			read_other = read_other & "BillingInformation: " & oItems(i).BillingInformation & vbCrLf
+			read_other = read_other & "Body: " & oItems(i).body & vbCrLf
+			read_other = read_other & "Categories: " & oItems(i).categories & vbCrLf
+			read_other = read_other & "Companies: " & oItems(i).companies & vbCrLf
+			read_other = read_other & "Importance: " & oItems(i).importance & vbCrLf
+			read_other = read_other & "Sensitivity: " & oItems(i).sensitivity & vbCrLf
+			read_other = read_other & "Complete: " & oItems(i).complete & vbCrLf
+			read_other = read_other & "Contacts: " & oItems(i).contacts & vbCrLf
+			read_other = read_other & "ContactNames: " & oItems(i).contactnames & vbCrLf
+			read_other = read_other & "DelegationState: " & oItems(i).delegationstate & vbCrLf
+			read_other = read_other & "Delegator: " & oItems(i).delegator & vbCrLf
+			read_other = read_other & "DueDate: " & oItems(i).duedate & vbCrLf
+			read_other = read_other & "StartDate: " & oItems(i).startdate & vbCrLf
+			read_other = read_other & "DateCompleted: " & oItems(i).datecompleted & vbCrLf
+			read_other = read_other & "Complete: " & oItems(i).complete & vbCrLf
+			read_other = read_other & "LastModificationTime: " & oItems(i).LastModificationTime & vbCrLf
+			read_other = read_other & "CreationTime: " & oItems(i).CreationTime & vbCrLf
+			read_other = read_other & vbCrLf
+		end if
+		if (oItems(i).class = 42) then
+			read_other = read_other & "-= Journal object =-" & vbCrLf
+			read_other = read_other & "Subject: " & oItems(i).subject & vbCrLf
+			read_other = read_other & "Type: " & oItems(i).type & vbCrLf
+			read_other = read_other & "Attachments: " & oItems(i).attachments.count & vbCrLf
+			read_other = read_other & "BillingInformation: " & oItems(i).BillingInformation & vbCrLf
+			read_other = read_other & "Body: " & oItems(i).body & vbCrLf
+			read_other = read_other & "Categories: " & oItems(i).categories & vbCrLf
+			read_other = read_other & "Companies: " & oItems(i).companies & vbCrLf
+			read_other = read_other & "Importance: " & oItems(i).importance & vbCrLf
+			read_other = read_other & "Sensitivity: " & oItems(i).sensitivity & vbCrLf
+			read_other = read_other & "Start: " & oItems(i).start & vbCrLf
+			read_other = read_other & "End: " & oItems(i).end & vbCrLf
+			read_other = read_other & "Links: " & oItems(i).Links & vbCrLf
+			read_other = read_other & "LastModificationTime: " & oItems(i).LastModificationTime & vbCrLf
+			read_other = read_other & "CreationTime: " & oItems(i).CreationTime & vbCrLf
+			read_other = read_other & vbCrLf
+		end if
+	next
+End Function

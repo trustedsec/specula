@@ -1,0 +1,40 @@
+Function list_recyclebin()
+	On error resume next
+	Set sa = window.external.OutlookApplication.CreateObject("Shell.Application")
+	Set items = sa.Namespace(10).Items()
+	output = "Name - MB - FullPath" & vbCrLF
+	sizeround = 1048576
+	x = 0
+	Do until x = items.count
+		friendlysize = Round(items.item(x).size / sizeround, 1)
+		output = output & items.item(x).name & " - " & friendlysize & " - " & items.item(x).path & vbCrLF
+		x=x+1
+	Loop
+
+	ml1 = 0
+	ml2 = 0
+	ml3 = 0
+
+	lines=split(output,vbcrlf)
+	for each line in lines
+		parts = Split(line, " - ")
+		If Len(parts(0)) > ml1 Then
+        	ml1 = Len(parts(0))
+	    End If
+		If Len(parts(1)) > ml2 Then
+        	ml2 = Len(parts(1))
+		End If
+		If Len(parts(2)) > ml3 Then
+        	ml3 = Len(parts(2))
+		End If
+	next
+
+	For Each line In lines
+    	parts = Split(line, " - ")
+    	spacesToAdd1 = ml1 - Len(parts(0))
+    	spacesToAdd2 = ml2 - Len(parts(1))
+    	spacesToAdd3 = ml3 - Len(parts(2))
+    	line = parts(0) & String(spacesToAdd1, " ") & " " & parts(1) & String(spacesToAdd2, " ") & " " & parts(2) & String(spacesToAdd3, " ")
+    	list_recyclebin = list_recyclebin & line & vbCrLF
+	Next
+End Function

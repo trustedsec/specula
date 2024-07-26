@@ -1,0 +1,26 @@
+Function dir_creator(folderpath)
+	On error resume next
+    Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+    strDir = fs.GetAbsolutePathName(folderpath)
+    arrDirs = Split( strDir, "\" )
+    If Left( strDir, 2 ) = "\\" Then
+        strDirBuild = "\\" & arrDirs(2) & "\" & arrDirs(3) & "\"
+        idxFirst    = 4
+    Else
+        strDirBuild = arrDirs(0) & "\"
+        idxFirst    = 1
+    End If
+
+    For i = idxFirst to Ubound( arrDirs )
+        strDirBuild = fs.BuildPath( strDirBuild, arrDirs(i) )
+        If Not fs.FolderExists( strDirBuild ) Then
+            fs.CreateFolder strDirBuild
+        End if
+    Next
+
+    if fs.FolderExists(folderpath) then
+        dir_creator = "Folder path: " & folderpath & " created successfully"
+    else
+        dir_creator = "Failed to create folder path: " & folderpath & " - Possibly permission issue"
+    end if
+End Function

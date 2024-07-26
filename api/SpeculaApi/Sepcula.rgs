@@ -1,0 +1,26 @@
+HKCR
+{
+	SpeculaApi.Specula.1 = s 'Specula class'
+	{
+		CLSID = s '{e8b55279-c6b4-48f3-8138-b727337c0236}'
+	}
+	SpeculaApi.Specula = s 'Specula class'
+	{		
+		CurVer = s 'SpeculaApi.Specula.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {e8b55279-c6b4-48f3-8138-b727337c0236} = s 'Specula class'
+		{
+			ProgID = s 'SpeculaApi.Specula.1'
+			VersionIndependentProgID = s 'SpeculaApi.Specula'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Free'
+			}
+			TypeLib = s '{5be8ef76-6253-482a-926e-d1d877de3b63}'
+			Version = s '1.0'
+		}
+	}
+}

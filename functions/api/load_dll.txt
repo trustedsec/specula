@@ -1,0 +1,9 @@
+Function load_dll
+   on error resume next
+   Set SpeculaApi = window.external.OutlookApplication.CreateObject("SpeculaApi.Specula")
+   if SpeculaApi.LoadDll("{{dll}}") = 1 Then
+      load_dll = "True"
+   Else
+      load_dll = "False"
+   End If
+End Function

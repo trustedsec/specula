@@ -1,0 +1,14 @@
+Function DelRegKey_HKCU(PathToKey)
+    On Error Resume Next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objreg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+
+	objreg.EnumKey 2147483649, PathToKey, arrSubkeys
+	If IsArray(arrSubkeys) Then
+		For Each strSubkey In arrSubkeys
+			DelRegKey_HKCU(PathToKey & "\" & strSubkey)
+		Next
+	End If
+	objreg.DeleteKey 2147483649, PathToKey
+	DelRegKey_HKCU = "Regkey : HKCU\\" & PathToKey & " Deleted recursive"
+End Function

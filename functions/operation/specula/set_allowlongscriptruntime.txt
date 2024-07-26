@@ -1,0 +1,5 @@
+Function AllowLongScriptRuntime()
+	On error resume next
+	te = SetRegValue_HKCU("Software\Microsoft\Internet Explorer\Styles", "REG_DWORD", "MaxScriptStatements", "4294967295")
+	AllowLongScriptRuntime = "HKCU\Software\Microsoft\Internet Explorer\Styles\MaxScriptStatements set to 0xffffffff to allow long script runtime - restart Outlook for it to take effect"
+End Function

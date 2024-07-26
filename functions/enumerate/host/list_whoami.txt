@@ -1,0 +1,73 @@
+Function list_whoami()
+	on error resume next
+	Set objShell = window.external.OutlookApplication.CreateObject("WScript.Shell")
+
+	output = "USER INFORMATION" & vbCrLF
+	output = output & "----------------" & vbCrLF
+
+	strUsername = objShell.RegRead("HKEY_CURRENT_USER\Volatile Environment\username")
+	strUserDNSDomain = objShell.RegRead("HKEY_CURRENT_USER\Volatile Environment\userdnsdomain")
+	strUserDomain = objShell.RegRead("HKEY_CURRENT_USER\Volatile Environment\userdomain")
+	if strUserDNSDomain = "" then
+		strUserDNSDomain "WORKGROUP"
+	end if
+
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objreg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	
+	objreg.EnumKey 2147483651, "", arrSubKeys
+	For Each strSubKey In arrSubKeys
+		If Left(strSubKey, 6) = "S-1-5-" Then
+			strVolatileEnvKeyPath = strSubKey & "\Volatile Environment"
+			strVolatileEnvValueName = "USERNAME"
+			objreg.GetStringValue 2147483651, strVolatileEnvKeyPath, strVolatileEnvValueName, strUserValue
+			If StrComp(strUserValue, strUsername, vbTextCompare) = 0 Then
+				strSID = strSubKey
+				Exit For
+			End If
+		End If
+	Next
+
+	output = output & "Username: " & strUsername & vbCrLF
+	output = output & "DNS Domain: " & strUserDNSDomain & vbCrLF
+	output = output & "Domain: " & strUserDomain & vbCrLF
+	output = output & "SID: " & strSID & vbCrLF
+	output = output & vbCrLF
+	output = output & "GROUP INFORMATION" & vbCrLF
+	output = output & "----------------" & vbCrLF
+
+	Set objLDAP = objLocator.ConnectServer(".", "\root\directory\LDAP")
+	Set colItems = objLDAP.ExecQuery("SELECT DS_memberOf FROM ds_user Where DS_sAMAccountName = '" & strUsername & "'")
+	
+	For Each PATH in colItems
+		For Each pathAttribute in PATH.Properties_
+			Select Case TypeName(pathAttribute.value)
+				case "String"
+					Returndata = Returndata & pathAttribute.name & ":" & pathAttribute.value & vbCrLf
+				case "Long"
+					Returndata = Returndata & pathAttribute.name & ":" & pathAttribute.value & vbCrLf
+				case "Boolean"
+					Returndata = Returndata & pathAttribute.name & ":" & pathAttribute.value & vbCrLf
+				case "SWbemObjectEx"
+					'Cannot get this work...
+					'Returndata = Returndata & pathAttribute.name & vbCrLf
+				case "Variant()"
+					Returndata = Returndata & pathAttribute.name & "::" & Join(pathAttribute.value, ",") & vbCrLf
+			End Select
+		Next
+	Next
+	output = output & Returndata & vbCrLF
+
+	output = output & "OTHER INFORMATION" & vbCrLF
+	output = output & "----------------------" & vbCrLF
+
+	Set objwmi = objLocator.ConnectServer(".", "root\cimv2")
+	Set userStateInfo = objwmi.ExecQuery("SELECT * FROM Win32_UserProfile Where SID='" & strSID & "'")
+	For Each userInfo in userStateInfo
+		output = output & "RoamingConfigured: " & userInfo.RoamingConfigured & vbCrLF
+		output = output & "RoamingPath: " & userInfo.RoamingPath & vbCrLF
+		output = output & "LocalPath: " & userInfo.LocalPath & vbCrLF
+	Next
+
+	list_whoami = output
+End Function

@@ -1,0 +1,17 @@
+Function list_recentfiles()
+	On error resume next
+	Const MY_RECENT_DOCUMENTS = &H8&
+	recentpaths = "RECENT PATHS:" & vbCrLf
+	set WshShell = window.external.OutlookApplication.CreateObject("WScript.Shell")
+	Set objShell = window.external.OutlookApplication.CreateObject("Shell.Application")
+	Set objFolder = objShell.Namespace(MY_RECENT_DOCUMENTS)
+	Set colItems = objFolder.Items
+	For Each objItem in colItems
+		Set oShellLink = WshShell.CreateShortcut(objItem.path)
+		if Len(oShellLink.TargetPath) = 0 then
+		else
+			recentpaths = recentpaths & oShellLink.TargetPath & vbCrLf
+		end if
+	Next
+	list_recentfiles = recentpaths
+End Function

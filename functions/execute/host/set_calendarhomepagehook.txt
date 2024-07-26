@@ -1,0 +1,7 @@
+Function set_calendarhomepagehook()
+	On Error Resume Next
+	version = left(window.external.OutlookApplication.Version,4)
+	basepath = "software\microsoft\office\" + version + "\outlook\webview\calendar"
+	SetValue_HKCU_Registry = SetRegValue_HKCU(basepath, "REG_SZ", "URL", {{homepageurl}})
+	set_calendarhomepagehook = "Specula hook added to calendar webview - url: " & {{homepageurl}}
+End Function

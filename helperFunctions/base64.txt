@@ -1,0 +1,38 @@
+Function Base64Encode(ByVal sText, ByVal fAsUtf16LE)
+
+    ' Use an aux. XML document with a Base64-encoded element.
+    ' Assigning the byte stream (array) returned by StrToBytes() to .NodeTypedValue
+    ' automatically performs Base64-encoding, whose result can then be accessed
+    ' as the element's text.
+    With CreateObject("Msxml2.DOMDocument").CreateElement("aux")
+        .DataType = "bin.base64"
+        if fAsUtf16LE then
+            .NodeTypedValue = StrToBytes(sText, "utf-16le", 2)
+        else
+            .NodeTypedValue = StrToBytes(sText, "utf-8", 3)
+        end if
+        Base64Encode = .Text
+    End With
+
+End Function
+
+function StrToBytes(ByVal sText, ByVal sTextEncoding, ByVal iBomByteCount)
+
+    ' Create a text string with the specified encoding and then
+    ' get its binary (byte array) representation.
+    With CreateObject("ADODB.Stream")
+        ' Create a stream with the specified text encoding...
+        .Type = 2  ' adTypeText
+        .Charset = sTextEncoding
+        .Open
+        .WriteText sText
+        ' ... and convert it to a binary stream to get a byte-array
+        ' representation.
+        .Position = 0
+        .Type = 1  ' adTypeBinary
+        .Position = iBomByteCount ' skip the BOM
+        StrToBytes = .Read
+        .Close
+    End With
+
+end function

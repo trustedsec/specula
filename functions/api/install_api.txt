@@ -1,0 +1,43 @@
+
+Function install_api()
+	On Error Resume Next
+	is64 = false
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objreg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	objreg.GetStringValue 2147483650, "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\outlook.exe", "Path", strPath
+	if InStr(strPath, "x86") > 0 Then
+		SetValue_HKCU_Registry = "32"
+	else
+		SetValue_HKCU_Registry = "64"
+		is64 = true
+	end if
+	basepath = "software\classes\"
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "SpeculaApi.Specula", "REG_SZ", "@", "Specula class") & vbCrLf
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "SpeculaApi.Specula\CurVer", "REG_SZ", "@", "SpeculaApi.Specula.1") & vbCrLf
+	SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "SpeculaApi.Specula.1", "REG_SZ", "@", "Specula class") & vbCrLf
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "SpeculaApi.Specula.1\CLSID", "REG_SZ", "@", "{e8b55279-c6b4-48f3-8138-b727337c0236}") & vbCrLf
+
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "CLSID\{e8b55279-c6b4-48f3-8138-b727337c0236}", "REG_SZ", "@", "Specula class") & vbCrLf
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "CLSID\{e8b55279-c6b4-48f3-8138-b727337c0236}\InprocServer32", "REG_SZ", "@", {{file}}) & vbCrLf
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "CLSID\{e8b55279-c6b4-48f3-8138-b727337c0236}\InprocServer32", "REG_SZ", "ThreadingModel", "Free") & vbCrLf
+
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "CLSID\{e8b55279-c6b4-48f3-8138-b727337c0236}\ProgId", "REG_SZ", "@", "SpeculaApi.Specula.1") & vbCrLf
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "CLSID\{e8b55279-c6b4-48f3-8138-b727337c0236}\Programmable", "REG_SZ", "@", "") & vbCrLf
+	SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "CLSID\{e8b55279-c6b4-48f3-8138-b727337c0236}\TypeLib", "REG_SZ", "@", "{5be8ef76-6253-482a-926e-d1d877de3b63}") & vbCrLf
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "CLSID\{e8b55279-c6b4-48f3-8138-b727337c0236}\Version", "REG_SZ", "@", "1.0") & vbCrLf
+    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "CLSID\{e8b55279-c6b4-48f3-8138-b727337c0236}\VersionIndependentProgID", "REG_SZ", "@", "SpeculaApi.Specula") & vbCrLf
+	
+	SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "TypeLib\{5be8ef76-6253-482a-926e-d1d877de3b63}\1.0", "REG_SZ", "@", "SpeculaApiLib") & vbCrLf
+	SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "TypeLib\{5be8ef76-6253-482a-926e-d1d877de3b63}\1.0\FLAGS", "REG_SZ", "@", "0") & vbCrLf
+	SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "TypeLib\{5be8ef76-6253-482a-926e-d1d877de3b63}\1.0\0\win32", "REG_SZ", "@", {{file}}) & vbCrLf
+	if (is64) then
+	    SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "TypeLib\{5be8ef76-6253-482a-926e-d1d877de3b63}\1.0\0\win64", "REG_SZ", "@", {{file}}) & vbCrLf
+	end if
+
+	SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "Interface\{B0F5F947-8064-48F7-A623-5C058DC91CC8}", "REG_SZ", "@", "ISepcula") & vbCrLf
+	SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "Interface\{B0F5F947-8064-48F7-A623-5C058DC91CC8}\ProxyStubClsid32", "REG_SZ", "@", "{00020424-0000-0000-C000-000000000046}") & vbCrLf
+	SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "Interface\{B0F5F947-8064-48F7-A623-5C058DC91CC8}\TypeLib", "REG_SZ", "@", "{5be8ef76-6253-482a-926e-d1d877de3b63}") & vbCrLf
+	SetValue_HKCU_Registry = SetValue_HKCU_Registry & SetRegValue_HKCU(basepath + "Interface\{B0F5F947-8064-48F7-A623-5C058DC91CC8}\TypeLib", "REG_SZ", "Version", "1.0") & vbCrLf
+
+	install_api = SetValue_HKCU_Registry
+End Function

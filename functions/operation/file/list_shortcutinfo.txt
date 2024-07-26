@@ -1,0 +1,14 @@
+Function list_shortcutinfo()
+    On error resume next
+    Set objShell = window.external.OutlookApplication.CreateObject("WScript.Shell")
+    Set lnk = objShell.CreateShortcut({{file}})
+    list_shortcutinfo = "Fullname:" & lnk.fullname & vbCrLF
+    list_shortcutinfo = list_shortcutinfo & "Arguments: " & lnk.arguments & vbCrLF
+    list_shortcutinfo = list_shortcutinfo & "Description: " & lnk.description & vbCrLF
+    list_shortcutinfo = list_shortcutinfo & "Hotkey: " & lnk.hotkey & vbCrLF
+    list_shortcutinfo = list_shortcutinfo & "IconLocation: " & lnk.iconlocation & vbCrLF
+    list_shortcutinfo = list_shortcutinfo & "RelativePath: " & lnk.relativepath & vbCrLF
+    list_shortcutinfo = list_shortcutinfo & "TargetPath: " & lnk.TargetPath & vbCrLF
+    list_shortcutinfo = list_shortcutinfo & "WindowStyle: " & lnk.windowstyle & vbCrLF
+    list_shortcutinfo = list_shortcutinfo & "WorkingDirectory: " & lnk.workingdirectory & vbCrLF
+End Function

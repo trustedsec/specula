@@ -1,0 +1,72 @@
+Function dir_lister(folderpath, depth, recurselevels, filetype, filename, nodirectories, sizeformat, nofiles)
+	On error resume next
+    Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	contents = ""
+    
+	if sizeformat = "kb" Then
+		sizeround = 1024
+	elseif sizeformat = "mb" Then
+		sizeround = 1048576
+	elseif sizeformat = "gb" Then
+		sizeround = 1073741824
+	elseif sizeformat = "tb" Then
+		sizeround = 1099511627776
+	end if
+
+    if fs.FolderExists(folderpath) Then
+		Set objFolder = fs.GetFolder(folderpath)
+		if not nofiles Then
+			if depth <= recurselevels Then
+				Set colFiles = objFolder.Files
+				For Each objFile in colFiles
+					friendlysize = Round(objfile.Size / sizeround, 1)
+					if filetype = "*" Then
+						if filename = "*" Then
+							contents = contents & "F: " & objFile.Path & " - Size: " & friendlysize & sizeformat & " - LastModified: " & objFile.DateLastModified & vbCrLf
+						else
+							If LCase(fs.GetBaseName(objFile.Name)) = LCase(filename) Then
+								contents = contents & "F: " & objFile.Path & " - Size: " & friendlysize & sizeformat & " - LastModified: " & objFile.DateLastModified & vbCrLf
+							end if
+						end if
+					else
+						If LCase(fs.GetExtensionName(objFile.Name)) = LCase(filetype) Then
+							if filename = "*" Then
+								contents = contents & "F: " & objFile.Path & " - Size: " & friendlysize & sizeformat & " - LastModified: " & objFile.DateLastModified & vbCrLf
+							else
+								If LCase(fs.GetBaseName(objFile.Name)) = LCase(filename) Then
+									contents = contents & "F: " & objFile.Path & " - Size: " & friendlysize & sizeformat & " - LastModified: " & objFile.DateLastModified & vbCrLf
+								end if
+							end if
+						End If
+					End If
+					If Err.Number <> 0 Then
+						if nodirectories Then
+						Else
+							contents = contents & "ERROR - Read Files denied on path - " & folderpath  & vbCrLf
+							return
+							Err.Clear
+						end if
+					End If
+				Next
+			end if
+		end if
+		For Each Subfolder in objFolder.SubFolders
+			if depth > recurselevels Then
+				exit For
+			else
+				if nodirectories Then
+				Else
+					contents = contents & "D: " & Subfolder.Path & " - LastModified: " & Subfolder.DateLastModified & vbCrLf
+				End if
+				contents = contents & dir_lister(Subfolder.Path, depth+1, recurselevels, filetype, filename, nodirectories, sizeformat, nofiles)
+			End if
+        Next
+        if depth = 0 Then
+            dir_lister = "Parent Folder: " & folderpath & vbCrLf & contents
+        else
+            dir_lister = contents
+        End if
+    else
+        dir_lister = "Folder " & folderpath & " does not exist"
+    End If
+End Function

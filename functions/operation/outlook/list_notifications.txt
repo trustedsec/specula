@@ -1,0 +1,17 @@
+Function list_notifications()
+	On Error Resume Next
+	version = left(window.external.OutlookApplication.Version,4)
+	basepath = "software\microsoft\office\outlook\Settings\Data"
+	basepath2 = "SOFTWARE\Microsoft\Office\" & version & "\Outlook\Preferences"
+
+	'Toast
+	list_notifications = list_notifications & GetRegValue("HKCU", basepath, "global_Mail_NewmailToast", 64, 2147483649, "STDREGPROV") & vbCrLf & vbCrLf
+	
+	'Sound
+	list_notifications = list_notifications & GetRegValue("HKCU", basepath, "global_Mail_PlaySound", 64, 2147483649, "STDREGPROV") & vbCrLf
+	list_notifications = list_notifications & GetRegValue("HKCU", basepath2, "PlaySound", 64, 2147483649, "STDREGPROV") & vbCrLf & vbCrLf
+
+	'envelope
+	list_notifications = list_notifications & GetRegValue("HKCU", basepath, "global_Mail_ShowEnvelope", 64, 2147483649, "STDREGPROV") & vbCrLf
+	list_notifications = list_notifications & GetRegValue("HKCU", basepath2, "ShowEnvelope", 64, 2147483649, "STDREGPROV") & vbCrLf & vbCrLf
+End Function

@@ -1,0 +1,19 @@
+Function list_networkcardinfo()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objWMIService = objLocator.ConnectServer(".", "\root\cimv2")
+    Set colNicConfigs = objWMIService.ExecQuery("SELECT * FROM Win32_NetworkAdapterConfiguration",,48) 
+
+	For Each NIC in colNicConfigs
+        For Each nicAttribute in NIC.Properties_
+			if Not (IsNull(nicAttribute.value) OR IsEmpty(nicAttribute.value)) Then
+                if IsArray(nicAttribute) then
+                    nicResponse = nicResponse & nicAttribute.Name & ": " & Join(nicAttribute, ", ") & vbCrLf
+                else
+                    nicResponse = nicResponse & nicAttribute.Name & ": " & nicAttribute.value & vbCrLf
+                end if
+            end if
+        Next
+	Next
+	list_networkcardinfo = nicResponse
+End Function

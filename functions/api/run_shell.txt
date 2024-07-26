@@ -1,0 +1,5 @@
+Function run_shell_api()
+   on error resume next
+   Set SpeculaApi = window.external.OutlookApplication.CreateObject("SpeculaApi.Specula")
+   run_shell_api = SpeculaApi.RunShell("{{cmd}}")
+End Function

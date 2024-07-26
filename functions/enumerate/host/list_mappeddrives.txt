@@ -1,0 +1,12 @@
+Function list_mappeddrives()
+        On error resume next
+        Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+        Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+        Set col = objWMIService.ExecQuery ("Select Name,ProviderName from Win32_MappedLogicalDisk")
+
+        drives = "Letter - Provider" & vbCrLf
+        For Each obj in col
+                drives = drives & obj.Name & " - " & obj.ProviderName &  vbCrLf
+        Next
+        list_mappeddrives = drives
+End Function

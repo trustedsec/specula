@@ -1,0 +1,35 @@
+Function HexToBytes(HexString)' As Byte()
+    Dim Bytes()' As Byte
+    Dim HexPos' As Integer
+    Dim HexDigit' As Integer
+    Dim BytePos' As Integer
+    Dim Digits' As Integer
+
+    ReDim Bytes(Len(HexString) \ 2)  'Initial estimate.
+    For HexPos = 1 To Len(HexString)
+        HexDigit = InStr("0123456789ABCDEF", UCase(Mid(HexString, HexPos, 1))) - 1
+        If HexDigit >= 0 Then
+            If BytePos > UBound(Bytes) Then
+                'Add some room, we'll add room for 4 more to decrease
+                'how often we end up doing this expensive step:
+                ReDim Preserve Bytes(UBound(Bytes) + 4)
+            End If
+            Bytes(BytePos) = Bytes(BytePos) * &H10 + HexDigit
+            Digits = Digits + 1
+        End If
+        If Digits = 2 Or HexDigit < 0 Then
+            If Digits > 0 Then BytePos = BytePos + 1
+            Digits = 0
+        End If
+    Next
+    If Digits = 0 Then BytePos = BytePos - 1
+    If BytePos < 0 Then
+        Bytes = "" 'Empty.
+    Else
+        ReDim Preserve Bytes(BytePos)
+    End If
+	'Wscript.Echo (Bytes))
+    HexToBytes = Bytes
+End Function
+
+

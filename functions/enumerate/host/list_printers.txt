@@ -1,0 +1,9 @@
+Function list_printers()
+	On error resume next
+	Set wsh = window.external.OutlookApplication.CreateObject("Wscript.Network")
+	Set printers = wsh.EnumPrinterConnections
+	For i = 0 to printers.Count - 1 Step 2
+            output = output & "Printername: " & printers.Item(i+1) & " - Port: " & printers.Item(i) & vbCrLf
+         Next
+	list_printers = "Found " & printers.count & " printers:" & vbCrLf & output
+End Function

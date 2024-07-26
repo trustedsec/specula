@@ -1,0 +1,27 @@
+Function list_installedpowershell()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objReg = objLocator.ConnectServer(".", "root\cimv2").Get("StdRegProv")
+	
+	keyps3 = "SOFTWARE\Microsoft\PowerShell\3\PowerShellEngine"
+	keyps1 = "SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine"
+
+	poshkey = "SOFTWARE\Microsoft\PowerShell"
+	objReg.EnumKey 2147483650, keyps1, arrSubKeys
+	objReg.GetStringValue 2147483650, keyps1, "PowerShellVersion", ver2
+
+	objReg.EnumKey 2147483650, keyps3, arrSubKeys
+	objReg.GetStringValue 2147483650, keyps3, "PowerShellVersion", ver3
+
+	If IsNull(ver3) Then
+		If IsNull(ver2) Then
+			val = "nothing"
+		Else
+			val = ver2
+		End If
+	Else
+		val = ver3
+	End If
+
+	list_installedpowershell = "PowerShell Version: " & val & vbCrlf & vbCrLf
+End Function

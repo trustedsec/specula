@@ -1,0 +1,48 @@
+Function list_addcomputertodomain()
+	On error resume next
+	Set fs = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	Set sh = window.external.OutlookApplication.CreateObject("Wscript.Shell")
+	dom = sh.ExpandEnvironmentStrings("%USERDNSDOMAIN%")
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "\root\directory\LDAP")
+	Returndata = Returndata & "Running query: SELECT DS_ms_DS_MachineAccountQuota FROM ds_domaindns" & vbCrLf
+	Set colItems = objWMIService.ExecQuery("SELECT DS_ms_DS_MachineAccountQuota FROM ds_domaindns")
+	For Each PATH in colItems
+		For Each pathAttribute in PATH.Properties_
+			Select Case TypeName(pathAttribute.value)
+				case "String"
+					Returndata = Returndata & pathAttribute.name & ":" & pathAttribute.value & vbCrLf
+				case "Long"
+					Returndata = Returndata & pathAttribute.name & ":" & pathAttribute.value & vbCrLf
+				case "Boolean"
+					Returndata = Returndata & pathAttribute.name & ":" & pathAttribute.value & vbCrLf
+				case "SWbemObjectEx"
+					'Cannot get this work...
+					'Returndata = Returndata & pathAttribute.name & vbCrLf
+				case "Variant()"
+					Returndata = Returndata & pathAttribute.name & "::" & Join(pathAttribute.value, ",") & vbCrLf
+			End Select
+		Next
+		Returndata = Returndata & vbCrLf
+	Next
+	
+   	polpath = "\\" & dom & "\Sysvol\" & dom & "\Policies\{6AC1786C-016F-11D2-945F-00C04FB984F9}\MACHINE\Microsoft\Windows NT\SecEdit\GptTmpl.inf"
+	Set f = fs.OpenTextFile(polpath, 1, False, True)
+	If fs.FileExists( polpath ) Then
+		Do While f.AtEndOfStream = False
+			strLine = f.readline
+			if InStr(strLine, "SeMachineAccountPrivilege") > 0 Then
+				Returndata = Returndata & "Found SeMachineAccountPrivilege entry in default domain controller policy at path" & vbCrLf
+				Returndata = Returndata & polpath & vbCrLf
+				Returndata = Returndata & "Entry: "
+				Returndata = Returndata & strLine & vbCrLf
+			end if
+		loop
+		f.close
+	else
+		Returndata = Returndata & "Could not find default domain controller policy at path" & vbCrLf
+		Returndata = Returndata & polpath & vbCrLf
+	end if
+
+	list_addcomputertodomain = Returndata
+End Function

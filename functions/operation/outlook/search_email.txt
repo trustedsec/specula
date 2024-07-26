@@ -1,0 +1,65 @@
+Function search_email()
+	on error resume next
+	input = {{folder_to_search}}
+	itemcount = {{items_to_read}}
+
+	FoldersArray = Split(input, "\")
+	Set TestFolder = window.external.OutlookApplication.Session.Folders(1).folders.item(FoldersArray(0)) 
+	if not IsNull(TestFolder) then
+		for i = 1 To UBound(FoldersArray, 1)
+			Set SubFolders = TestFolder.Folders
+			Set TestFolder = SubFolders.item(FoldersArray(i))
+		next
+	end if
+
+	If TestFolder is Nothing Then
+		Set TestFolder = Nothing
+		output = output & input & " folder could not be found. Sure it exists?" & vbCrLf
+		search_email = output
+		Exit Function
+	end if
+
+	Set oItems = TestFolder.items
+	Set oFilterItems = TestFolder.Items.Restrict({{search_string}})
+
+	oFilterItems.Sort "[CreationTime]", True
+	if itemcount > oFilterItems.count then
+	 	itemcount = oFilterItems.count
+	end if
+
+	search_email = "Getting searched items from - " & input & vbCrLf
+	search_email = search_email & "Found " & oFilterItems.count & " items with the search: "& {{search_string}} & vbCrLf
+	search_email = search_email & "Dumping latest " & itemcount & " from the found items" & vbCrLf
+	if {{save_attachments}} = True then
+		search_email = search_email & "Export of attachments enabled - Creating Export Folder" & vbCrLf
+		search_email = search_email & dir_creator({{export_path}}) & vbCrLf
+	else
+		search_email = search_email & vbCrLf
+	end if
+	For i = 1 To itemcount
+	 	 if (oFilterItems(i).class = 43) then
+		 	search_email = search_email & "-= Mail object =-" & vbCrLf
+		 	search_email = search_email & "Mail Subject: " & oFilterItems(i).subject & vbCrLf
+		 	search_email = search_email & "Mail To: " & oFilterItems(i).To & vbCrLf
+		 	search_email = search_email & "Mail Sender: " & oFilterItems(i).sender & vbCrLf
+			search_email = search_email & "Importance: " & oFilterItems(i).importance & vbCrLf
+		 	search_email = search_email & "Mail Attachments: " & oFilterItems(i).attachments.count & vbCrLf
+		 	if oFilterItems(i).attachments.count <> "" then
+		 		for ii = 1 To oFilterItems(i).Attachments.count
+		 			search_email = search_email & "Attachment name " & ii & ": " & oFilterItems(i).Attachments(ii) & vbCrLf
+					if {{save_attachments}} = True then
+						oFilterItems(i).Attachments(ii).SaveAsFile({{export_path}} & "\" & oFilterItems(i).Attachments(ii).FileName)
+						search_email = search_email & "Exported : " & oFilterItems(i).Attachments(ii) & " To path " & {{export_path}} & vbCrLf
+					end if
+		 		next
+			end if
+		 	search_email = search_email & "Mail Unread: " & oFilterItems(i).UnRead & vbCrLf
+		 	if ({{include_body}}) then
+		 		search_email = search_email & "Mail Body format: " & oFilterItems(i).bodyformat & vbCrLf
+		 		search_email = search_email & "Mail Body: " & oFilterItems(i).body & vbCrLf & vbCrLf
+		 	else
+		 		search_email = search_email & vbCrLf
+		 	end if
+		 end if
+	next
+End Function

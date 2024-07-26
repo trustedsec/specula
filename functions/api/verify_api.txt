@@ -1,0 +1,9 @@
+Function api_verify()
+    On error resume next
+    Set specApi = window.external.OutlookApplication.CreateObject("SpeculaApi.Specula")
+    If IsObject(specApi) Then
+        api_verify = True
+    else
+        api_verify = False
+    End if
+End Function

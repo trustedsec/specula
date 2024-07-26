@@ -1,0 +1,4 @@
+Function create_dir()
+    On error resume next
+    create_dir = dir_creator({{directory}})
+End Function

@@ -1,0 +1,67 @@
+Function split_file()
+	on error resume next
+	Set oFSO = window.external.OutlookApplication.CreateObject("Scripting.FileSystemObject")
+	FullName = {{ file }} 
+	TargetDir = {{ directory }}
+	
+	Name = {{ basename_split_files }}
+	SplitSize = {{ splitsize }}
+	Size = 1024 * 1024 * SplitSize
+
+	if oFSO.FileExists(FullName) then
+  		On Error Resume Next
+		Set iFile = oFSO.GetFile(FullName)
+  		Set iStream = iFile.OpenAsTextStream(1)
+  		
+  		data = iStream.Read(iFile.Size)
+  		iStream.close
+  
+  		Ext = 0
+  		offset = 1
+
+		If Not oFSO.FolderExists(TargetDir) Then
+	    	strDir = oFSO.GetAbsolutePathName(TargetDir)
+    		
+			'Split a multi level path in its "components"
+    		arrDirs = Split( strDir, "\" )
+
+    		'Absolute path is UNC or not
+    		If Left( strDir, 2 ) = "\\" Then
+        		strDirBuild = "\\" & arrDirs(2) & "\" & arrDirs(3) & "\"
+        		idxFirst    = 4
+    		Else
+        		strDirBuild = arrDirs(0) & "\"
+        		idxFirst    = 1
+    		End If
+
+    		'Check each (sub)folder and create it if it doesn't exist
+    		For i = idxFirst to Ubound( arrDirs )
+        		strDirBuild = oFSO.BuildPath( strDirBuild, arrDirs(i) )
+        		If Not oFSO.FolderExists( strDirBuild ) Then
+            		oFSO.CreateFolder strDirBuild
+					split_file = split_file & "Created Folder: " & strDirBuild & vbCrLf
+				End if
+    		Next
+		end if
+
+  		Do
+    		Ext = Right("00" & Ext + 1, 3)
+    		if ext > "999" then Error ("Too many files - maximum is 999!")
+
+    		NewName = TargetDir & "\" & Name & Ext
+    		Set oFile = oFSO.CreateTextFile(NewName, 2)
+
+			If Size > Len(data)+1 - offset Then Size = Len(data) + 1 - offset
+    
+    		oFile.Write Mid(Data, offset, Size)
+    		offset = offset + Size
+    		oFile.Close
+			split_file = split_file & "Created file: " & NewName & vbCrLf
+
+  		Loop Until offset >= Len(data)
+		split_file = split_file & FullName & " splitted into " & Ext & " parts."
+		
+	else
+		split_file = "Error - " & FullName & " not found or some other strange error"
+	end if
+End Function

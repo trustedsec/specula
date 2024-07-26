@@ -1,0 +1,48 @@
+Function GetAllRegValues(Root, Regpath, Arch, Rootint)
+	On Error Resume Next
+	GetAllRegValues = "Failed to get values under " & Root & "\" & Regpath
+	const REG_SZ = 1
+	const REG_EXPAND_SZ = 2
+	const REG_BINARY = 3
+	const REG_DWORD = 4
+	const REG_MULTI_SZ = 7
+	const REG_QWORD = 11
+	Set oCtx = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemNamedValueSet")
+	oCtx.Add "__ProviderArchitecture", Arch
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objreg = objLocator.ConnectServer(".","root\cimv2","","",,,,oCtx).Get("StdRegProv")
+	objreg.EnumValues RootInt, Regpath, arrValueNames, arrValueTypes
+	GetAllRegValues = "" 
+	for I=0 To UBound(arrValueNames)
+		GetAllRegValues = GetAllRegValues & "Path: " & Root & "\" & Regpath & vbCrLf 
+		GetAllRegValues = GetAllRegValues & "ValueName: " & arrValueNames(I) & vbCrLf
+		Select Case arrValueTypes(I)
+			Case REG_SZ
+				objreg.GetStringValue RootInt, Regpath, arrValueNames(I), strValue
+				GetAllRegValues = GetAllRegValues & "RegType: REG_SZ" & vbCrLf
+				GetAllRegValues = GetAllRegValues & "Value: " & strValue & vbCrLf
+			Case REG_EXPAND_SZ
+				objreg.GetExpandedStringValue RootInt, Regpath, arrValueNames(I), strValue
+				GetAllRegValues = GetAllRegValues & "RegType: REG_EXPAND_SZ" & vbCrLf
+				GetAllRegValues = GetAllRegValues & "Value: " & strValue & vbCrLf
+			Case REG_BINARY
+				objreg.GetBinaryValue RootInt, Regpath, arrValueNames(I), strValue
+				GetAllRegValues = GetAllRegValues & "RegType: REG_BINARY" & vbCrLf
+				GetAllRegValues = GetAllRegValues & "Value: Binary data not fetched" & vbCrLf
+			Case REG_DWORD
+				objreg.GetDWORDValue RootInt, Regpath, arrValueNames(I), strValue
+				GetAllRegValues = GetAllRegValues & "RegType: REG_DWORD" & vbCrLf
+				GetAllRegValues = GetAllRegValues & "Value: " & strValue & vbCrLf
+			Case REG_MULTI_SZ
+				objreg.GetMultiStringValue RootInt, Regpath, arrValueNames(I), strValue
+				GetAllRegValues = GetAllRegValues & "RegType: REG_MULTI_SZ" & vbCrLf
+				GetAllRegValues = GetAllRegValues & "Value: " & strValue & vbCrLf
+			Case REG_QWORD
+				objreg.GetQWORDValue RootInt, Regpath, arrValueNames(I), strValue
+				GetAllRegValues = GetAllRegValues & "RegType: REG_QWORD" & vbCrLf
+				GetAllRegValues = GetAllRegValues & "Value: " & strValue & vbCrLf
+		End Select
+		GetAllRegValues = GetAllRegValues & vbCrLf
+	Next
+	GetAllRegValues = GetAllRegValues & "-----------------------------------------" & vbCrLf
+End Function

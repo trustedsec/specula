@@ -1,0 +1,6 @@
+Function changeview_outlookfolder()
+	on error resume next
+	Set folder = window.external.OutlookApplication.GetNameSpace("MAPI").GetDefaultFolder({{ folder }})
+	Set window.external.OutlookApplication.ActiveExplorer.CurrentFolder = folder
+	changeview_outlookfolder = "Changed View to: " & folder
+End Function

