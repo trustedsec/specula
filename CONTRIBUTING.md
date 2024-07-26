@@ -7,8 +7,8 @@ At this time we will not be accepting new functional changes to the provided COM
 existing code we will accept a pull to fix that within the COM object.
 
 ## Technique Expectations
-Capabilities should run without causing outlook.exe to lock up.
-Capabilities should acount for errors that may occur and handle them
+* Capabilities should run without causing outlook.exe to lock up.
+* Capabilities should acount for errors that may occur and handle them
 
 ## Code Expectations
 * python code should be coded to work from version 3.9 to 3.11
