@@ -1,0 +1,79 @@
+Function list_scheduledtasks()
+	On error resume next
+	Const wbemFlagReturnImmediately = &h10
+	Const wbemFlagForwardOnly = &h20
+
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+	Set objWMIService = objLocator.ConnectServer(".", "ROOT\Microsoft\Windows\TaskScheduler")
+	Set col = objWMIService.ExecQuery ("SELECT * FROM MSFT_ScheduledTask", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
+
+	For Each objItem in col
+    	schedtasks = schedtasks & vbCrLf & "TaskName: " & objItem.TaskName
+    	schedtasks = schedtasks & vbCrLf & "TaskPath: " & objItem.TaskPath
+		schedtasks = schedtasks & vbCrLf & "Source: " & objItem.Source
+    	schedtasks = schedtasks & vbCrLf & "State: " & objItem.State
+		schedtasks = schedtasks & vbCrLf & "URI: " & objItem.URI
+		schedtasks = schedtasks & vbCrLf & "Author: " & objItem.Author
+    	schedtasks = schedtasks & vbCrLf & "Date: " & objItem.Date
+		schedtasks = schedtasks & vbCrLf & "Description: " & objItem.Description
+
+		schedtasks = schedtasks & vbCrLf & "Actions Details:"
+		For Each objAction In objItem.Actions
+			schedtasks = schedtasks & vbCrLf & "    ClassId: " & objAction.ClassId
+			schedtasks = schedtasks & vbCrLf & "    Data: " & objAction.Data
+			schedtasks = schedtasks & vbCrLf & "    Arguments: " & objAction.Arguments
+			schedtasks = schedtasks & vbCrLf & "    Execute: " & objAction.Execute
+		Next
+
+		Set objPrincipal = objItem.Principal
+		schedtasks = schedtasks & vbCrLf & "Principal Details:"
+		schedtasks = schedtasks & vbCrLf & "    GroupId: " & objPrincipal.GroupId
+		schedtasks = schedtasks & vbCrLf & "    Id: " & objPrincipal.Id
+		schedtasks = schedtasks & vbCrLf & "    LogonType: " & objPrincipal.LogonType
+		schedtasks = schedtasks & vbCrLf & "    RunLevel: " & objPrincipal.RunLevel
+		schedtasks = schedtasks & vbCrLf & "    UserId: " & objPrincipal.UserId
+		schedtasks = schedtasks & vbCrLf & "    ProcessTokenSidType: " & objPrincipal.ProcessTokenSidType
+		Set objPrincipal = Nothing
+		schedtasks = schedtasks & vbCrLf & "SecurityDescriptor: " & objItem.SecurityDescriptor
+
+		Set objSettings = objItem.Settings
+		schedtasks = schedtasks & vbCrLf & "Settings Details:"
+		schedtasks = schedtasks & vbCrLf & "    AllowDemandStart: " & objSettings.AllowDemandStart
+		schedtasks = schedtasks & vbCrLf & "    AllowHardTerminate: " & objSettings.AllowHardTerminate
+		schedtasks = schedtasks & vbCrLf & "    Compatibility: " & objSettings.Compatibility
+		schedtasks = schedtasks & vbCrLf & "    DeleteExpiredTaskAfter: " & objSettings.DeleteExpiredTaskAfter
+		schedtasks = schedtasks & vbCrLf & "    DisallowStartIfOnBatteries: " & objSettings.DisallowStartIfOnBatteries
+		schedtasks = schedtasks & vbCrLf & "    Enabled: " & objSettings.Enabled
+		schedtasks = schedtasks & vbCrLf & "    ExecutionTimeLimit: " & objSettings.ExecutionTimeLimit
+		schedtasks = schedtasks & vbCrLf & "    Hidden: " & objSettings.Hidden
+		schedtasks = schedtasks & vbCrLf & "    IdleSettings: " & objSettings.IdleSettings
+		schedtasks = schedtasks & vbCrLf & "    MultipleInstances: " & objSettings.MultipleInstances
+		schedtasks = schedtasks & vbCrLf & "    Priority: " & objSettings.Priority
+		schedtasks = schedtasks & vbCrLf & "    RestartCount: " & objSettings.RestartCount
+		schedtasks = schedtasks & vbCrLf & "    RestartInterval: " & objSettings.RestartInterval
+		schedtasks = schedtasks & vbCrLf & "    RunOnlyIfIdle: " & objSettings.RunOnlyIfIdle
+		schedtasks = schedtasks & vbCrLf & "    StartWhenAvailable: " & objSettings.StartWhenAvailable
+		schedtasks = schedtasks & vbCrLf & "    StopIfGoingOnBatteries: " & objSettings.StopIfGoingOnBatteries
+		schedtasks = schedtasks & vbCrLf & "    WakeToRun: " & objSettings.WakeToRun
+		Set objSettings = Nothing
+		schedtasks = schedtasks & vbCrLf & "Settings: " & objItem.Settings
+		schedtasks = schedtasks & vbCrLf &  "Triggers Details:"
+		For Each objTrigger In objItem.Triggers
+			schedtasks = schedtasks & vbCrLf & "    Id: " & objTrigger.Id
+			schedtasks = schedtasks & vbCrLf & "    RandomDelay: " & objTrigger.RandomDelay
+			schedtasks = schedtasks & vbCrLf & "    DaysInterval: " & objTrigger.DaysInterval
+			schedtasks = schedtasks & vbCrLf & "    StartBoundary: " & objTrigger.StartBoundary
+			schedtasks = schedtasks & vbCrLf & "    Enabled: " & objTrigger.Enabled
+			schedtasks = schedtasks & vbCrLf & "    StateChange: " & objTrigger.StateChange
+			
+			Set objRepetition = objTrigger.Repetition
+			schedtasks = schedtasks & vbCrLf & "    Repetition Details: "
+			schedtasks = schedtasks & vbCrLf & "        StopAtDurationEnd: " & objRepetition.StopAtDurationEnd
+			schedtasks = schedtasks & vbCrLf & "        Duration: " & objRepetition.Duration
+			schedtasks = schedtasks & vbCrLf & "        Interval: " & objRepetition.Interval
+			set objRepetition = Nothing
+		Next
+    schedtasks = schedtasks & vbCrLf
+	Next
+	list_scheduledtasks = schedtasks
+End Function
