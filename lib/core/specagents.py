@@ -93,7 +93,10 @@ class AgentClass:
         
     def generate_com(self):
         self.encryptionkey = secrets.token_urlsafe(16)
-        self.url = gconfig.DNS_NAME + gconfig.BASE_PATH_AGENT_COM + secrets.token_urlsafe(10)
+        if gconfig.WEBSERVER_PORT not in (80, 443):
+            self.url = gconfig.DNS_NAME + ":" + str(gconfig.WEBSERVER_PORT) + gconfig.BASE_PATH_AGENT_COM + secrets.token_urlsafe(10)
+        else:    
+            self.url = gconfig.DNS_NAME + gconfig.BASE_PATH_AGENT_COM + secrets.token_urlsafe(10)
         self.codeurl = self.url + "/" + secrets.token_urlsafe(6)
         self.supporturl = self.url + "/" + secrets.token_urlsafe(5)
     

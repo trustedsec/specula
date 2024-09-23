@@ -37,8 +37,12 @@ class ValidateAgentHandler(tornado.web.RequestHandler):
                 self.application.helpers.speclog("""
 *** [WARNING] The Hostname we are returning does not equal the hostname used
     {} != {}""".format(hn, self.hostname))
+            port_value = "" 
+            if gconfig.WEBSERVER_PORT not in (80, 443):
+                port_value = f":{gconfig.WEBSERVER_PORT}"
             self.render('validation.html',
                         DNS=gconfig.DNS_NAME,
+                        PORT=port_value,
                         URL=gconfig.VALIDATE_URL,
                         REFRESH_TIME=self.application.helpers.addJitter(gconfig.JITTER, gconfig.DEFAULT_REFRESH_TIME),
                         OUTLOOK_VIEW_ID=gconfig.OUTLOOK_VIEW_ID,

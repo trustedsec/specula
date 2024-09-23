@@ -128,7 +128,10 @@ class SpecPrompt(cmd.Cmd): #Leaving this one here as it is the top level menu
     def do_generatehooker(self, inp):
         args = Helpers.getarguments(inp)
         if len(args) == 0:
-            hooker_payloads = hooker_generator.Payloads(gconfig.DNS_NAME+gconfig.VALIDATE_URL,None, None, True, None, False)
+            if gconfig.WEBSERVER_PORT not in (80, 443):
+                hooker_payloads = hooker_generator.Payloads(gconfig.DNS_NAME+":"+str(gconfig.WEBSERVER_PORT)+gconfig.VALIDATE_URL,None, None, True, None, False)
+            else:
+                hooker_payloads = hooker_generator.Payloads(gconfig.DNS_NAME+gconfig.VALIDATE_URL,None, None, True, None, False)
             print(hooker_payloads.gen_registry_hooker())
         else:
             hooker_payloads = hooker_generator.Payloads(gconfig.DNS_NAME+gconfig.VALIDATE_URL,None, None, True, None, False)
