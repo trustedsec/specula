@@ -1,0 +1,14 @@
+function nslookup()
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objWMIService = objLocator.ConnectServer(".", "root\cimv2")
+
+    Set colPings = objWMIService.ExecQuery("SELECT * FROM Win32_PingStatus WHERE Address = '" & {{hostname}} & "'")
+
+    For Each objPing in colPings
+        If objPing.StatusCode = 0 Then
+            nslookup = "Hostname: " & {{hostname}} & " = " & objPing.ProtocolAddress
+        Else
+            nslookup = "Failed to resolve: " & {{hostname}}
+        End If
+    Next
+end function

